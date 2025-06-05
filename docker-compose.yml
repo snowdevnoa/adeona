@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:17-alpine # Define stable postgres version
+    container_name: adeona-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB} # (optional, good for init.sql references)
+    volumes:
+      - pgdata:/var/lib/postgresql/data #volume mount pgdata to let Docker handle it
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql #bind mount local sql file to container's
+    networks:
+      - backend
+    ports:
+      - "5432:5432" # Map postgres local port to container port
+networks:
+  backend:
+    driver: bridge # default but explicitly define bridge
+volumes:
+  pgdata: #let Docker handle the postgresdata
