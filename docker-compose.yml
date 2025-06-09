@@ -28,6 +28,9 @@ services:
     networks:
       - backend
       - frontend
+    depends_on:
+      - db
+    restart: always
 
 networks:
   backend:

@@ -1,11 +1,18 @@
-const express = require("express");
+import express from "express";
+import getMessage from "./config/db.js";
+
 const app = express();
 const port = 3000;
 
-app.get("/api", (req, res) => {
-	res.send("Hello World! No");
+app.get("/", async (req, res) => {
+	try {
+		const message = await getMessage();
+		res.send(`Hello World! ${message}`);
+	} catch (err) {
+		res.status(500).send("Failed to fetch message from DB.");
+	}
 });
 
 app.listen(port, () => {
-	console.log(`Example app lsistening on port ${port}`);
+	console.log(`Example app listening on port ${port}`);
 });
