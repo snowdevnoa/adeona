@@ -1,0 +1,5 @@
+# Exclude local dependencies and npm cache/config from Docker image build context
+# These are not needed since npm install runs inside the container
+node_modules
+.npm
+.next
