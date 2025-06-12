@@ -1,7 +1,7 @@
-import { Client } from "pg";
-import "dotenv/config"; // Ensure dotenv is loaded for process.env
+import { Pool } from "pg";
+import "dotenv/config";
 
-const client = new Client({
+const pool = new Pool({
   host: process.env.POSTGRES_HOST,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
@@ -9,21 +9,20 @@ const client = new Client({
   database: process.env.POSTGRES_DB,
 });
 
-async function connectToPostgres() {
-  try {
-    await client.connect();
-    console.log("Connected to Postgres!");
-  } catch (err) {
-    console.error("Failed to connect to Postgres:", err);
+// Check connection once, but don't hold it open
+pool
+  .query("SELECT 1")
+  .then(() => console.log("✅ Connected to Postgres!"))
+  .catch((err) => {
+    console.error("❌ Failed to connect to Postgres:", err);
     process.exit(1);
-  }
-}
+  });
 
-// Connect immediately when the module loads
-// Since Docker Compose ensures the DB is ready, this should succeed on first try.
-connectToPostgres();
+// Clean up pool on app shutdown (for dev)
+process.on("SIGINT", async () => {
+  await pool.end(); // closes all idle clients
+  console.log("🛑 Postgres pool has ended");
+  process.exit(0);
+});
 
-export default async function getMessage() {
-  const result = await client.query("SELECT * FROM test_table;");
-  return result.rows[0].message;
-}
+export default pool;
