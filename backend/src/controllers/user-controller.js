@@ -1,4 +1,4 @@
-import UserService from "../services/user-service";
+import UserService from "../services/user-service.js";
 
 const user = new UserService();
 
@@ -9,14 +9,13 @@ export const registerUser = async (req, res) => {
 		const newUser = req.body;
 
 		// Validate new user info and add to database service
-		await user.register(newUser); // wait for registration
-
+		const registeredUser = await user.register(newUser); // wait for registration
 		// Respond back to client with success
-		res.status(200).send(`Welcome to Adeona ${newUser.username}!`);
+		res.status(200).send(`Welcome to Adeona ${registeredUser}!`);
 	} catch (err) {
 		// Respond back to client with error
 		console.error(err);
-		res.status(500).json({ error: "Registration failed" });
+		res.status(400).json({ error: err + ", registration failed" });
 	}
 };
 

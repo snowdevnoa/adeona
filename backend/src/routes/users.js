@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser } from '../controllers/user-controller';
+import { loginUser, registerUser } from '../controllers/user-controller.js';
 
 
 const router = express.Router()
@@ -8,4 +8,6 @@ const router = express.Router()
 router.post('/register', registerUser) // Controller to create user in database
 
 // define the login page route
-router.get('/login', verifyUser) // Controller to verify user in database and return back jwt to client
+router.get('/login', loginUser) // Controller to verify user in database and return back jwt to client
+
+export default router;

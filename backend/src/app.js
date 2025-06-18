@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import testRouter from "./routes/tests-routes.js";
+import userRouter from "./routes/users.js";
 
 const app = express();
 const port = 3000;
-
 
 // Enable CORS to allow cross-origin requests from the browser (e.g., frontend running on a different origin)
 app.use(
@@ -14,9 +14,8 @@ app.use(
 );
 
 // Parse any incoming JSON data
-app.use(express.json()) 
-app.use(express.urlencoded({ extended: true })) 
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
 	res.send(`Hello World!`);
@@ -24,6 +23,8 @@ app.get("/", async (req, res) => {
 
 // Import and use the test router
 app.use("/tests", testRouter);
+
+app.use("/users", userRouter);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
