@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import testRouter from "./routes/tests-routes.js";
 import userRouter from "./routes/users.js";
+import "dotenv/config";
 
 const app = express();
 const port = 3000;

@@ -5,7 +5,6 @@ const user = new UserService();
 // Create and define controllers from the users route
 export const registerUser = async (req, res) => {
 	try {
-		// Parse json data into object from client using built in express middleware
 		const newUser = req.body;
 
 		// Validate new user info and add to database service
@@ -21,5 +20,20 @@ export const registerUser = async (req, res) => {
 
 
 export const loginUser = async(req,res)=>{
+	try{
+		const existingUser = req.body;
+
+		// Validate existing user and return jwt token
+		const loginUser = await user.login(existingUser)
+
+		// Respond back to client with success
+		res.status(200).send(loginUser)
+
+	}catch(err){
+		// Respond back to client with error
+		console.log(err)
+		res.status(400).json({error: err + ", login failed"})
+	}
     
 }
+
