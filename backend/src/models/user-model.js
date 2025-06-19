@@ -24,12 +24,22 @@ export default class UserModel {
 		if (existingUsers.rowCount > 0) return existingUsers;
 		return false;
 	}
-
 	static async find(username) {
 		const existingUser = await pool.query(
 			`SELECT user_id, username, password_hash FROM users
              WHERE users.username = $1`,
 			[username]
+		);
+		if (existingUser.rowCount == 1) return existingUser.rows[0];
+		return false;
+	}
+
+
+	static async getById(id){
+		const existingUser = await pool.query(
+			`SELECT user_id, username FROM users
+             WHERE users.user_id = $1`,
+			[id]
 		);
 		if (existingUser.rowCount == 1) return existingUser.rows[0];
 		return false;

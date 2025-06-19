@@ -12,7 +12,6 @@ export default class UserService {
         password:
     }
     */
-
 	async register(user) {
 		// Validate user input using zod library
 		const User = z.object({
@@ -72,7 +71,6 @@ export default class UserService {
         password:
     }
     */
-
 	async login(user) {
 		// validate user input using zod library
 		const User = z.object({
@@ -108,7 +106,7 @@ export default class UserService {
 					// Payload, header, signature
 					const secretKey = process.env.JWT_SECRET;
 					console.log("User is verified");
-					console.log(secretKey)
+					console.log(secretKey);
 					const token = jwt.sign(
 						{
 							id: existingUser.user_id,
@@ -116,7 +114,7 @@ export default class UserService {
 							role: "user",
 						},
 						secretKey,
-						{ expiresIn: "10s" } // set expiration for good security practice
+						{ expiresIn: "1hr" } // set expiration for good security practice
 					);
 					console.log(token);
 					return { message: "Congrats you are now logged in", token };
@@ -130,6 +128,25 @@ export default class UserService {
 		} else {
 			// Invalid user
 			throw new Error("Invalid credentials");
+		}
+	}
+
+	/*
+		Expected mockup from authorized/logged in user:
+		{
+			id:
+			username:
+			role:
+
+		}
+	*/
+	async getProfile(user) {
+		try{
+			const { id } = user;
+			const profile = await UserModel.getById(id);
+			return profile;
+		}catch(err){
+			throw new Error("Sorry we could not find that user")
 		}
 	}
 }
