@@ -1,2 +1,74 @@
 /* (for Tailwind CSS v4.x) */
 @import "tailwindcss";
+
+@import url("https://fonts.googleapis.com/css2?family=Tsukimi+Rounded&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* Style Guide */
+
+:root {
+	/* Colors */
+	/* Primary - Cosmic Latte*/
+	--cosmic-latte-50: #fffdf7;
+	--cosmic-latte-100: #fffbef;
+	--cosmic-latte-200: #fff8e7; /*⭐*/
+	--cosmic-latte-300: #fbf5e6;
+	--cosmic-latte-400: #f4eddd;
+	--cosmic-latte-500: #ebe0d5;
+	--cosmic-latte-600: #dfcdc1;
+	--cosmic-latte-700: #b09b84;
+	--cosmic-latte-800: #7f6f5e;
+	--cosmic-latte-900: #4d4036;
+	/* Secondary - Adeona Blue*/
+	--adeonna-blue-25: #f5fbff;
+	--adeonna-blue-50: #ebf8ff;
+	--adeonna-blue-100: #e0f4ff;
+	--adeonna-blue-200: #d2efff;
+	--adeonna-blue-300: #c6e7ff; /*⭐*/
+	--adeonna-blue-400: #c3e3fb;
+	--adeonna-blue-500: #b0d7f5;
+	--adeonna-blue-600: #8ebee0;
+	--adeonna-blue-700: #669bcb;
+	--adeonna-blue-800: #416e98;
+	--adeonna-blue-900: #253c52;
+
+	/* Error */
+	--error-25: #fffafa;
+	--error-50: #fef3f2;
+	--error-100: #fee4e2;
+	--error-200: #fecdc9;
+	--error-300: #fda19b;
+	--error-400: #f97066;
+	--error-500: #f04438;
+	--error-600: #d92d20;
+	--error-700: #b32318;
+	--error-800: #912018;
+	--error-900: #7a271a;
+
+	/* Warning */
+	--warning-25: #fffcf5;
+	--warning-50: #fffaeb;
+	--warning-100: #feefc6;
+	--warning-200: #fedf89;
+	--warning-300: #fec84b;
+	--warning-400: #fdb022;
+	--warning-500: #f79009;
+	--warning-600: #dc6803;
+	--warning-700: #b54708;
+	--warning-800: #93370d;
+	--warning-900: #792e0d;
+
+	/* Success */
+	--success-25: #f6fef9;
+	--success-50: #ecfdf3;
+	--success-100: #d1fadf;
+	--success-200: #a6f4c5;
+	--success-300: #6ce9a6;
+	--success-400: #32d583;
+	--success-500: #12b76a;
+	--success-600: #039855;
+	--success-700: #027948;
+	--success-800: #05603a;
+	--success-900: #054f31;
+}
+
+/* Text style follows Tailwind CSS*/
