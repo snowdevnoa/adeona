@@ -1,8 +1,5 @@
-/* (for Tailwind CSS v4.x) */
 @import "tailwindcss";
-
-@import url("https://fonts.googleapis.com/css2?family=Tsukimi+Rounded&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
-
+/* (for Tailwind CSS v4.x) */
 /* Style Guide */
 
 :root {
@@ -19,17 +16,17 @@
 	--cosmic-latte-800: #7f6f5e;
 	--cosmic-latte-900: #4d4036;
 	/* Secondary - Adeona Blue*/
-	--adeonna-blue-25: #f5fbff;
-	--adeonna-blue-50: #ebf8ff;
-	--adeonna-blue-100: #e0f4ff;
-	--adeonna-blue-200: #d2efff;
-	--adeonna-blue-300: #c6e7ff; /*⭐*/
-	--adeonna-blue-400: #c3e3fb;
-	--adeonna-blue-500: #b0d7f5;
-	--adeonna-blue-600: #8ebee0;
-	--adeonna-blue-700: #669bcb;
-	--adeonna-blue-800: #416e98;
-	--adeonna-blue-900: #253c52;
+	--adeona-blue-25: #f5fbff;
+	--adeona-blue-50: #ebf8ff;
+	--adeona-blue-100: #e0f4ff;
+	--adeona-blue-200: #d2efff;
+	--adeona-blue-300: #c6e7ff; /*⭐*/
+	--adeona-blue-400: #c3e3fb;
+	--adeona-blue-500: #b0d7f5;
+	--adeona-blue-600: #8ebee0;
+	--adeona-blue-700: #669bcb;
+	--adeona-blue-800: #416e98;
+	--adeona-blue-900: #253c52;
 
 	/* Error */
 	--error-25: #fffafa;
@@ -72,3 +69,7 @@
 }
 
 /* Text style follows Tailwind CSS*/
+
+* {
+	font-family: "Urbanist", sans-serif;
+}

@@ -1,12 +1,16 @@
+import Link from "next/link";
+
 export default async function Page() {
-	const message = await fetch(`${process.env.DEV_SERVER_URL}/tests`)
-	const message_text = await message.json()
+	const message = await fetch(`${process.env.DEV_SERVER_URL}/tests`);
+	const message_text = await message.json();
 
 	return (
-		<>
+		<main>
 			<h1 className="text-3xl font-bold">Hello world! no</h1>
 			<a className="underline decoration-indigo-500">{message_text.message}</a>
-		</>
+			<Link href="/register">Register</Link>
+			<Link href="/login">Login</Link>
+		</main>
 	);
 }
 
