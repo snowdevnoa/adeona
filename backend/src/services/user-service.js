@@ -22,7 +22,7 @@ export default class UserService {
 				.min(8, "Password must be at least 8 characters long")
 				.regex(
 					/^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/,
-					"Password must contain at least one number and one special character"
+					"Password must contain at least one number and one special character (!@#$%^&*-+._)"
 				),
 		});
 

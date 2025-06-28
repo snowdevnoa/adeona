@@ -70,6 +70,7 @@
 
 /* Text style follows Tailwind CSS*/
 
-* {
-	font-family: "Urbanist", sans-serif;
+body {
+	font-family: "Urbanist", Courier, monospace;
+	color: var(--adeona-blue-900);
 }

@@ -45,7 +45,7 @@ export default function SplashScreen() {
 				{adeona.map((char, index) => (
 					<motion.span
 						key={index}
-						className="text-(--cosmic-latte-400)"
+						className="text-(--adeona-blue-900)"
 						variants={letter}
 					>
 						{char}

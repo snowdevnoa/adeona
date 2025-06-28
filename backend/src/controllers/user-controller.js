@@ -10,11 +10,11 @@ export const registerUser = async (req, res) => {
 		// Validate new user info and add to database service
 		const registeredUser = await user.register(newUser); // wait for registration
 		// Respond back to client with success
-		res.status(200).send(`Welcome to Adeona ${registeredUser}!`);
+		res.status(200).json({ success: `Welcome ${registeredUser} to adeona!` });
 	} catch (err) {
 		// Respond back to client with error
 		console.error(err);
-		res.status(400).json({ error: err + ", registration failed" });
+		res.status(400).json({ error: err.message });
 	}
 };
 
@@ -30,7 +30,7 @@ export const loginUser = async (req, res) => {
 	} catch (err) {
 		// Respond back to client with error
 		console.log(err);
-		res.status(400).json({ error: err + ", login failed" });
+		res.status(400).json({ error: err });
 	}
 };
 
