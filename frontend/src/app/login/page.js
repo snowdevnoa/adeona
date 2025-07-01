@@ -1,6 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
-import SplashScreen from "@/components/SplashScreen";
+import SplashScreen from "@/components/global/SplashScreen";
+import PageWrapper from "@/components/global/PageWrapper";
+import Header from "@/components/global/Header";
+import LoginForm from "@/components/user/LoginForm";
+import { motion } from "motion/react";
+
+// Appear animation
+const fadeAppear = {
+	opacity: [0, 100],
+	scale: [0.5, 1],
+	transition: { duration: 1.25, type: "tween", ease: "circInOut" },
+};
 
 export default function Login() {
 	const [isLoading, setIsLoading] = useState(true);
@@ -14,9 +25,17 @@ export default function Login() {
 	return isLoading ? (
 		<SplashScreen />
 	) : (
-		<main>
-			<h2 className="text-xl font-medium mt-[1rem]">your travel companion</h2>
-			<p>Login page</p>
-		</main>
+		<PageWrapper className="bg-[var(--cosmic-latte-200)] items-center justify-center min-h-screen  lg:flex-row">
+			<motion.div className="lg:bg-[url(/backgrounds/james-donaldson-toPRrcyAIUY-unsplash.jpg)] lg:min-h-screen lg:flex-1 bg-cover bg-center lg:flex lg:justify-center lg:items-center">
+				<Header />
+			</motion.div>
+
+			<motion.div
+				className="lg:flex-1 flex justify-center items-center px-[1rem] lg:px-[5rem]"
+				animate={fadeAppear}
+			>
+				<LoginForm />
+			</motion.div>
+		</PageWrapper>
 	);
 }

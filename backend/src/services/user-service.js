@@ -106,7 +106,7 @@ export default class UserService {
 					// Payload, header, signature
 					const secretKey = process.env.JWT_SECRET;
 					console.log("User is verified");
-					console.log(secretKey);
+					// console.log(secretKey);
 					const token = jwt.sign(
 						{
 							id: existingUser.user_id,
@@ -116,8 +116,8 @@ export default class UserService {
 						secretKey,
 						{ expiresIn: "1hr" } // set expiration for good security practice
 					);
-					console.log(token);
-					return { message: "Congrats you are now logged in", token };
+					// console.log(token);
+					return { message: `welcome back ${username}!`, token: token };
 				} else {
 					throw Error;
 				}
@@ -141,12 +141,12 @@ export default class UserService {
 		}
 	*/
 	async getProfile(user) {
-		try{
+		try {
 			const { id } = user;
 			const profile = await UserModel.getById(id);
 			return profile;
-		}catch(err){
-			throw new Error("Sorry we could not find that user")
+		} catch (err) {
+			throw new Error("Sorry we could not find that user");
 		}
 	}
 }

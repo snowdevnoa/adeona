@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import SplashScreen from "@/components/SplashScreen";
-import PageWrapper from "@/components/PageWrapper";
+import SplashScreen from "@/components/global/SplashScreen";
+import PageWrapper from "@/components/global/PageWrapper";
+import Header from "@/components/global/Header";
 import RegisterForm from "@/components/user/RegisterForm";
-import Header from "@/components/Header";
 import { motion } from "motion/react";
 
 // Appear animation

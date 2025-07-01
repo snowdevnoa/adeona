@@ -10,7 +10,8 @@ const port = 3000;
 // Enable CORS to allow cross-origin requests from the browser (e.g., frontend running on a different origin)
 app.use(
 	cors({
-		origin: "*",
+		origin: process.env.DEV_CORS_ORIGIN,
+		credentials: true,
 	})
 );
 

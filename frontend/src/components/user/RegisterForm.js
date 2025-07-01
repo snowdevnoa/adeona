@@ -2,9 +2,9 @@
 import Form from "next/form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Input from "../Input";
-import MainButton from "../MainButton";
-import SecondaryButton from "../SecondaryButton";
+import Input from "../global/Input";
+import MainButton from "../global/MainButton";
+import SecondaryButton from "../global/SecondaryButton";
 import { motion } from "motion/react";
 
 // Dot shuttle animation
@@ -46,7 +46,7 @@ export default function RegisterForm() {
 			};
 
 			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_DEV_CLIENT_URL}/users/register`,
+				`${process.env.NEXT_PUBLIC_DEV_API_URL}/users/register`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -78,9 +78,7 @@ export default function RegisterForm() {
 
 	return formComplete ? (
 		<div className="flex flex-col justify-center items-center">
-			<h1 className="font-bold text-2xl mt-[1rem]">
-				{message} 
-			</h1>
+			<h1 className="font-bold text-2xl mt-[1rem]">{message}</h1>
 			<h2>Taking you to the login page...</h2>
 
 			<div className="flex mt-[2rem]">

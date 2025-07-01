@@ -1,4 +1,5 @@
 import UserService from "../services/user-service.js";
+import cookie from "cookie";
 
 const user = new UserService();
 
@@ -26,11 +27,36 @@ export const loginUser = async (req, res) => {
 		const loginUser = await user.login(existingUser);
 
 		// Respond back to client with success
-		res.status(200).send(loginUser);
+		res
+			.status(200)
+			.cookie("access_token", `Bearer ${loginUser.token}`, {
+				maxAge: 3600 * 1000, // cookie 1hr max same as token
+				secure: true,
+				httpOnly: true,
+				sameSite: "none",
+			})
+			.json({ message: loginUser.message });
 	} catch (err) {
 		// Respond back to client with error
 		console.log(err);
-		res.status(400).json({ error: err });
+		res.status(400).json({ error: err.message });
+	}
+};
+
+export const logoutUser = async (req, res) => {
+	try {
+		// Clear the http cookie
+		const expiredCookie = cookie.serialize("access_token", "", {
+			httpOnly: true,
+			expires: new Date(0),
+			path: "/",
+		});
+		res
+			.status(200)
+			.setHeader("Set-Cookie", expiredCookie)
+			.json({ success: "Logged out successfully" });
+	} catch {
+		res.status(400).json({ error: "We could not log you out." });
 	}
 };
 
@@ -39,7 +65,7 @@ export const getUserProfile = async (req, res) => {
 		const activeUser = req.user;
 		// Grab user profile data
 		const profileData = await user.getProfile(activeUser);
-		res.status(200).send(profileData);
+		res.status(200).json(profileData);
 	} catch (err) {
 		// Could not get user profile
 		console.log(err);
