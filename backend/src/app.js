@@ -1,23 +1,32 @@
 import express from "express";
 import cors from "cors";
 import testRouter from "./routes/tests-routes.js";
+import userRouter from "./routes/users.js";
+import "dotenv/config";
 
 const app = express();
 const port = 3000;
+
+// Enable CORS to allow cross-origin requests from the browser (e.g., frontend running on a different origin)
+app.use(
+	cors({
+		origin: process.env.DEV_CORS_ORIGIN,
+		credentials: true,
+	})
+);
+
+// Parse any incoming JSON data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
 	res.send(`Hello World!`);
 });
 
-// Enable CORS to allow cross-origin requests from the browser (e.g., frontend running on a different origin)
-app.use(
-	cors({
-		origin: "*",
-	})
-);
-
 // Import and use the test router
 app.use("/tests", testRouter);
+
+app.use("/users", userRouter);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);

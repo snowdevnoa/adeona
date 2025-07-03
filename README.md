@@ -18,7 +18,7 @@ Adeona is a cloud-based full-stack travel application designed to simplify fligh
 For detailed planning, mockups, and architecture notes, check out the Notion workspace:  
 👉 [Adeona Project Notion](https://www.notion.so/adeona-1cdb84a4ca8580c19099edc94e679a43?pvs=4)
 
-CURRENT PHASE: DEVELOPMENT - Initialize docker environments
+CURRENT PHASE: DEVELOPMENT - User authorization with JWT
 
 ---
 
