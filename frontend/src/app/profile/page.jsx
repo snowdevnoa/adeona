@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import MainNav from "@/components/global/MainNav";
+import SecondaryNav from "@/components/global/SecondaryNav";
 
 export default function Profile() {
 	const [userProfile, setUserProfile] = useState(null);
@@ -52,6 +54,8 @@ export default function Profile() {
 
 	return userProfile ? (
 		<>
+			<MainNav />
+
 			<h1>Profile Page</h1>
 			<h2>Hello there! {userProfile.username}</h2>
 			<button
@@ -60,9 +64,11 @@ export default function Profile() {
 			>
 				Log out
 			</button>
+			<SecondaryNav />
 		</>
 	) : (
 		<>
+			<MainNav />
 			<h1>Please log in</h1>
 			<button
 				type="button"
@@ -72,6 +78,7 @@ export default function Profile() {
 			>
 				Log in
 			</button>
+			<SecondaryNav />
 		</>
 	);
 }

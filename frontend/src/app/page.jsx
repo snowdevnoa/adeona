@@ -1,4 +1,6 @@
 import Link from "next/link";
+import MainNav from "@/components/global/MainNav";
+import SecondaryNav from "@/components/global/SecondaryNav";
 
 export default async function Page() {
 	const message = await fetch(`${process.env.DEV_API_URL}/tests`);
@@ -6,11 +8,10 @@ export default async function Page() {
 
 	return (
 		<main>
+			<MainNav />
 			<h1 className="text-3xl font-bold">Hello world! no</h1>
 			<a className="underline decoration-indigo-500">{message_text.message}</a>
-			<Link href="/register">Register</Link>
-			<Link href="/login">Login</Link>
-			<Link href="/profile">Profile</Link>
+			<SecondaryNav />
 		</main>
 	);
 }
