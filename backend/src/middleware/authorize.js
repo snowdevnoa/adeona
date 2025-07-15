@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { parse } from "cookie";
 
 // Self note: look into refresh tokens to use with access tokens
+// Strict auth for protected routes
 export default function authorizeUser(req, res, next) {
 	// Get token from client http cookie
 	const cookies = parse(req.headers.cookie);
