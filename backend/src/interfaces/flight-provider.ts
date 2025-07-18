@@ -3,20 +3,20 @@ export interface FlightSearchData {
 	origin: string;
 	destination: string;
 	departureDate: string;
-	arrivalDate?: string;
-	passengerCount: number;
+	returnDate?: string;
+	adults: number;
+	children?: number;
+	infants?: number;
 	tripType: string;
 	flightClass: string;
-	// Optional advaned filtering
-	airline?: string;
-	minPrice?: number;
+	// Optional advanced filtering
+	includeAirlines?: string;
+	excludeAirlines?: string;
+	nonStop: boolean;
 	maxPrice?: number;
 	includeRedeye?: boolean;
 	dateFlexDays?: number;
 }
 export interface FlightProvider {
-	searchData: FlightSearchData;
-	getFlights(): Promise<any>; // async function so return promise
+	getFlights(searchData: FlightSearchData): Promise<any>; // async function so return promise
 }
-
-

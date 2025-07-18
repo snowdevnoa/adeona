@@ -6,7 +6,7 @@ export const guestFlightSearchLimiter = rateLimit({
 	max: 3, // Limit each IP to 3 requests per `windowMs`
 	message: {
 		status: 429,
-		error: "Too many flight searches. Please sign in to continue.",
+		error: "Oops! You’ve hit the guest search limit (3 per hour). Create an account or sign in for unlimited access.",
 	},
 	skip: (req, res) => !!req.user, // skip if user is authenticated
 	standardHeaders: true,

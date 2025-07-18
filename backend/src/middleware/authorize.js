@@ -6,12 +6,12 @@ import { parse } from "cookie";
 export default function authorizeUser(req, res, next) {
 	// Get token from client http cookie
 	const cookies = parse(req.headers.cookie);
-	const clientToken = cookies.access_token;
-	// console.log(cookies.access_token);
+	const clientToken = cookies.user_access_token;
+	// console.log(cookies.user_access_token);
 	// console.log(clientToken);
 
 	if (!clientToken || !clientToken.startsWith("Bearer ")) {
-		return res.status(401).json({ error: "User is not loggedd in" });
+		return res.status(401).json({ error: "User is not logged in" });
 	}
 	const token = clientToken.split(" ", 2)[1];
 	// Verify token

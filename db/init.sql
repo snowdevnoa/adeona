@@ -69,7 +69,7 @@ CREATE TABLE flights (
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
     departure_datetime TIMESTAMPTZ NOT NULL,
-    arrival_datetime TIMESTAMPTZ NOT NULL,
+    return_datetime TIMESTAMPTZ NOT NULL,
     duration_minutes SMALLINT NOT NULL,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
     currency CHAR(3) DEFAULT 'USD' NOT NULL,

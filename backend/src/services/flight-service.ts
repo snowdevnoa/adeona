@@ -1,37 +1,43 @@
 // Class based adapter
-import { FlightAdapter } from "../adapters/flight-adapter.ts";
+import { AmadeusAdapter } from "../adapters/amadeus-adapter.ts";
 import type { FlightSearchData } from "../interfaces/flight-provider.js";
 
 export default class FlightService {
 	/*
     incoming form data
     {
-    Required
         origin:
         destination:
         departureDate:
         arrivalDate:
-        passengerCount:
+        adults:
+        children?:
+        infants?:
         tripType:
         flightClass:
         ------------------
     advanced filters
-        airline:
-        minPrice:
-        maxPrice:
-        includeRedeye:
-        dateFlexDays:
+        includeAirlines:
+	    excludeAirlines: 
+	    nonStop:
+	    maxPrice:
+	    includeRedeye:
+	    dateFlexDays:
            
     }
      */
 	async searchFlights(searchData: FlightSearchData) {
+		// Validate form data from client
 
-        // Validate form data from client
-
-        
+		const amadeus = new AmadeusAdapter();
+		// Get access token from Amadeus
+		try {
+			await amadeus.requestAccessToken();
+		} catch (err) {
+			throw Error;
+		}
 		// Pass into the flight adapter to utilize the Amadeus api
-		const amadeus = new FlightAdapter(searchData);
-		const res = await amadeus.getFlights();
+		const res = await amadeus.getFlights(searchData);
 		return res;
 	}
 }

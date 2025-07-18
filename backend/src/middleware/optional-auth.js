@@ -4,7 +4,7 @@ import { parse } from "cookie";
 // non-blocking: attach req.user if valid token, otherwise continue
 export default function optionalAuth(req, res, next) {
 	const cookies = parse(req.headers.cookie || "");
-	const clientToken = cookies.access_token;
+	const clientToken = cookies.user_access_token;
 
 	if (clientToken && clientToken.startsWith("Bearer ")) {
 		const token = clientToken.split(" ")[1];

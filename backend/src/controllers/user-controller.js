@@ -29,7 +29,7 @@ export const loginUser = async (req, res) => {
 		// Respond back to client with success
 		res
 			.status(200)
-			.cookie("access_token", `Bearer ${loginUser.token}`, {
+			.cookie("user_access_token", `Bearer ${loginUser.token}`, {
 				maxAge: 3600 * 1000, // cookie 1hr max same as token
 				secure: true,
 				httpOnly: true,
@@ -46,7 +46,7 @@ export const loginUser = async (req, res) => {
 export const logoutUser = async (req, res) => {
 	try {
 		// Clear the http cookie
-		const expiredCookie = cookie.serialize("access_token", "", {
+		const expiredCookie = cookie.serialize("user_access_token", "", {
 			httpOnly: true,
 			expires: new Date(0),
 			path: "/",

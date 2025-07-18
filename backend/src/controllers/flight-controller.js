@@ -14,12 +14,11 @@ export const searchFlight = async (req, res) => {
 		// Return all matching flights
 		res.status(200).json(flights);
 	} catch (err) {
-		res.status(400).json({ error: "could not call controller" });
+		res.status(400).json({ error: err.message });
 	}
 };
 
 export const saveFlight = async (req, res) => {
 	const flightInfo = req.body;
-
 	// Return flight was successfully saved
 };
