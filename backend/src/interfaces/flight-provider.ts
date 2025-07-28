@@ -5,13 +5,15 @@ export interface FlightSearchData {
 	departureDate: string;
 	returnDate?: string;
 	adults: number;
-	children?: number;
-	infants?: number;
-	tripType: string;
+	children: number;
+	infants: number;
+	seniors: number;
+	tripType: "one_way" | "round_trip";
 	flightClass: string;
+	currency: string;
 	// Optional advanced filtering
-	includeAirlines?: string;
-	excludeAirlines?: string;
+	includeAirlines?: string[];
+	excludeAirlines?: string[];
 	nonStop: boolean;
 	maxPrice?: number;
 	includeRedeye?: boolean;

@@ -6,8 +6,8 @@ import optionalAuth from "../middleware/optional-auth.js";
 
 const router = express.Router();
 
-// define the search route - GET
-router.get("/search", optionalAuth, guestFlightSearchLimiter, searchFlight);
+// define the search route - POST
+router.post("/search", optionalAuth, guestFlightSearchLimiter, searchFlight);
 
 // define the save route - POST
 router.post("/save-flight", authorizeUser, saveFlight);

@@ -5,11 +5,12 @@ const flight = new FlightService();
 export const searchFlight = async (req, res) => {
 	try {
 		// Receive incoming form data from client
-		const flightSearchInfo = req.query;
-		// console.log(flightSearchInfo);
+		const flightSearchInfo = req.body;
 
 		// Pass into flight service
 		const flights = await flight.searchFlights(flightSearchInfo);
+
+		console.time(flights);
 
 		// Return all matching flights
 		res.status(200).json(flights);

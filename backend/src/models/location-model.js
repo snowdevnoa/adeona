@@ -2,20 +2,21 @@ import pool from "../config/db.js";
 
 export default class LocationModel {
 	static async checkForLocation(iata) {
-		console.log(`checking ${iata} in database`);
+		// console.log(`checking ${iata} in database`);
 		const result = await pool.query(
 			`
-			SELECT iata_code, airport_name, city, country_code, country FROM locations
+			SELECT iata_code, airport_name, city, country_code, country 
+			FROM locations
 			WHERE locations.iata_code = $1
 			`,
 			[iata]
 		);
 
 		if (result.rows.length === 0) {
-			console.log(`${iata} could not be found in database`);
+			console.log(`${iata} could not be found in locations database`);
 			return false;
 		} else {
-			console.log(`${iata} found in database`);
+			// console.log(`${iata} found in database`);
 			return true;
 		}
 	}
@@ -49,7 +50,7 @@ export default class LocationModel {
 		timezone VARCHAR(50)
 		 */
 
-		console.log(`${airportName} added to database`);
+		// console.log(`${airportName} added to database`);
 	}
 
 	static async getIATA(iataCode) {
@@ -59,7 +60,7 @@ export default class LocationModel {
 			WHERE locations.iata_code = $1`,
 			[iataCode]
 		);
-		console.log(iata.rows[0].iata_code);
+		// console.log(`Returning ${iata.rows[0].iata_code} from database`);
 
 		return iata.rows[0].iata_code;
 	}

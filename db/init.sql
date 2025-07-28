@@ -41,7 +41,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE airlines(
     airline_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     airline_name VARCHAR(100) UNIQUE NOT NULL,
-    iata_code CHAR(2) UNIQUE NOT NULL,
+    iata_code VARCHAR(3) UNIQUE NOT NULL,
     logo_url VARCHAR(2048) DEFAULT NULL,
     icon_url VARCHAR(2048) DEFAULT NULL
 );
@@ -86,7 +86,7 @@ CREATE TABLE flights (
 
     -- Check Constraints
     CONSTRAINT chk_duration_positive CHECK (duration_minutes >= 0),
-    CONSTRAINT chk_arrival_after_departure CHECK (arrival_datetime > departure_datetime)
+    CONSTRAINT chk_return_after_departure CHECK (return_datetime > departure_datetime)
 );
 
 
@@ -100,7 +100,7 @@ CREATE TABLE flight_segments(
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
     departure_datetime TIMESTAMPTZ NOT NULL,
-    arrival_datetime TIMESTAMPTZ NOT NULL,
+    return_datetime TIMESTAMPTZ NOT NULL,
     duration_minutes SMALLINT NOT NULL,
     layover_minutes SMALLINT DEFAULT 0,
 
@@ -115,7 +115,7 @@ CREATE TABLE flight_segments(
 
     -- Check Constraints
     CONSTRAINT chk_duration_positive CHECK (duration_minutes >= 0),
-    CONSTRAINT chk_arrival_after_departure CHECK (arrival_datetime > departure_datetime),
+    CONSTRAINT chk_return_after_departure CHECK (return_datetime > departure_datetime),
     CONSTRAINT chk_layover_nonnegative CHECK (layover_minutes IS NULL OR layover_minutes >= 0)
 
 );

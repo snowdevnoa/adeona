@@ -27,9 +27,17 @@ export default class FlightService {
     }
      */
 	async searchFlights(searchData: FlightSearchData) {
-		// Validate form data from client
+		// Normalize search data
+		const normalizeIATA = (code: string) => code.trim().toUpperCase();
+		const normalizedSearchData = {
+			...searchData,
+			origin: normalizeIATA(searchData.origin),
+			destination: normalizeIATA(searchData.destination),
+		};
 
-		const amadeus = new AmadeusAdapter();
+		// Resolve scenarios like CHI for chicago or NYC is LGA.
+		// Create a new api instance call
+		const amadeus = new AmadeusAdapter(normalizedSearchData);
 		// Get access token from Amadeus
 		try {
 			await amadeus.requestAccessToken();
@@ -37,7 +45,7 @@ export default class FlightService {
 			throw Error;
 		}
 		// Pass into the flight adapter to utilize the Amadeus api
-		const res = await amadeus.getFlights(searchData);
+		const res = await amadeus.getFlights();
 		return res;
 	}
 }
