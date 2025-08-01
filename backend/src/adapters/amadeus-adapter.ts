@@ -203,9 +203,9 @@ export class AmadeusAdapter implements FlightProvider {
 			currencyCode: this.searchData.currency,
 			originDestinations: originDestinations,
 			travelers: passengers,
-			sources: ["GDS"],
+			sources: ["GDS"], //change GDS to NDC for current and most recent prices
 			searchCriteria: {
-				maxFlightOffers: 50,
+				maxFlightOffers: 25,
 				flightFilters: {
 					cabinRestrictions: [
 						{
@@ -227,27 +227,6 @@ export class AmadeusAdapter implements FlightProvider {
 	}
 
 	async getFlights() {
-		// Resolve origin and destination to canonical airport codes
-		const resolvedOrigin = await this.fetchLocationDetails(
-			this.searchData.origin
-		);
-		const resolvedDestination = await this.fetchLocationDetails(
-			this.searchData.destination
-		);
-
-		// Save resolved codes back into searchData
-		this.searchData.origin = resolvedOrigin.iata;
-		this.searchData.destination = resolvedDestination.iata;
-
-		// Only now check and cache if missing
-		if (!(await LocationModel.checkForLocation(resolvedOrigin.iata))) {
-			await this.cacheLocation(resolvedOrigin.iata); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
-		}
-
-		if (!(await LocationModel.checkForLocation(resolvedDestination.iata))) {
-			await this.cacheLocation(resolvedDestination.iata);
-		}
-
 		/*https://developers.amadeus.com/self-service/category/flights/api-doc/airport-and-city-search/api-reference*/
 
 		// translate adeona form data to Amadeus query params for POST method

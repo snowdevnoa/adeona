@@ -6,11 +6,8 @@ export const searchFlight = async (req, res) => {
 	try {
 		// Receive incoming form data from client
 		const flightSearchInfo = req.body;
-
 		// Pass into flight service
-		const flights = await flight.searchFlights(flightSearchInfo);
-
-		console.time(flights);
+		const flights = await flight.searchFlights(flightSearchInfo, req.user);
 
 		// Return all matching flights
 		res.status(200).json(flights);

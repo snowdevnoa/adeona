@@ -3,13 +3,13 @@ export interface FlightSearchData {
 	origin: string;
 	destination: string;
 	departureDate: string;
-	returnDate?: string;
+	returnDate?: string | null;
 	adults: number;
 	children: number;
 	infants: number;
 	seniors: number;
 	tripType: "one_way" | "round_trip";
-	flightClass: string;
+	flightClass: "ECONOMY" | "PREMIUM_ECONOMY" | "BUSINESS" | "FIRST";
 	currency: string;
 	// Optional advanced filtering
 	includeAirlines?: string[];

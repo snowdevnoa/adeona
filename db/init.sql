@@ -181,7 +181,13 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE search_history(
     search_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
-    search_params JSONB NOT NULL,
+    origin VARCHAR(3) NOT NULL,
+    destination VARCHAR(3) NOT NULL,
+    departure_date DATE NOT NULL,
+    return_date DATE,
+    trip_type TEXT NOT NULL, -- "one-way", "round-trip"
+    
+    filters JSONB, -- optional: class, stops, airline preferences, etc.
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     -- Foreign Key Constraint
@@ -204,6 +210,8 @@ CREATE TABLE search_history(
 -- Saved Filters table - users common searches: name
     CREATE INDEX idx_saved_filters_name ON saved_filters(name);
 
+-- Search History table - for measuring search frequency 
+    CREATE INDEX idx_search_freq_basic ON search_history (origin, destination, departure_date, return_date, trip_type, created_at);
 
 -- Notes for future scalability
 -- Partitioning large tables
