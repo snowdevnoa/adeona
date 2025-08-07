@@ -3,6 +3,9 @@ import { AmadeusAdapter } from "../adapters/amadeus-adapter.ts";
 import type { FlightSearchData } from "../interfaces/flight-provider.js";
 import SearchHistoryModel from "../models/search-history-model.js";
 import LocationModel from "../models/location-model.js";
+import FlightModel from "../models/flight-model.js";
+import FlightSegmentModel from "../models/flight-segments-model.js";
+import AirlineModel from "../models/airline-model.js";
 
 export default class FlightService {
 	/*
@@ -30,19 +33,38 @@ export default class FlightService {
      */
 
 	async validateSearchData(searchData: FlightSearchData) {
-		const validData = { ...searchData };
-		/* Verify location and origin are strings and not some malicious code. Convert them to strings first before checking*/
-		/* Ensure departure date is >= current date*/
-		/* Ensure return date > departure date */
-		/* Validate adults, children, infants are integer number */
-		/* Validate trip Type enums. If trip is round_trip it must contain a return date and not null else if one way return date should be null*/
-		/* Validate flight class enums */
+		let currentDate = new Date();
 
-		return validData;
+		try {
+			/* Verify location and origin are strings and not some malicious code. Convert them to strings first before checking*/
+			if (!searchData.origin || !searchData.destination)
+				throw new Error("Invalid destination");
+			/* Ensure departure date is >= current date*/
+			if (new Date(searchData.departureDate) < currentDate)
+				throw new Error("Departure date cannot be before current date");
+			/* Validate trip Type enums. If trip is round_trip it must contain a return date and not null else if one way return date should be null*/
+			if (searchData.tripType == "round_trip" && !searchData.returnDate)
+				throw new Error("There must be a return date for round trips");
+			if (searchData.tripType == "one_way" && searchData.returnDate)
+				throw new Error("Return date should be blank");
+			/* Validate flight class enums */
+			/* Ensure return date > departure date */
+			if (searchData.returnDate) {
+				if (
+					new Date(searchData.returnDate) < new Date(searchData.departureDate)
+				)
+					throw new Error("Return date cannot be before departure date");
+			}
+			/* Validate adults, children, infants are integer number */
+		} catch (err) {
+			if (err instanceof Error) throw Error(err.message);
+		}
 	}
 
 	async searchFlights(searchData: FlightSearchData, user: any) {
 		// console.log(user);
+
+		await this.validateSearchData(searchData);
 
 		// Create a new api instance call
 		const amadeus = new AmadeusAdapter(searchData);
@@ -58,7 +80,7 @@ export default class FlightService {
 		searchData.origin = searchData.origin.toUpperCase();
 		searchData.destination = searchData.destination.toUpperCase();
 
-		console.log(`${searchData.origin} ${searchData.destination}`);
+		console.log(`${searchData.origin} to ${searchData.destination}`);
 
 		const { iata: originIATA } = await amadeus.fetchLocationDetails(
 			searchData.origin
@@ -67,15 +89,6 @@ export default class FlightService {
 		const { iata: destinationIATA } = await amadeus.fetchLocationDetails(
 			searchData.destination
 		);
-
-		// Only now check in locations database and cache if missing
-		if (!(await LocationModel.checkForLocation(originIATA))) {
-			await amadeus.cacheLocation(originIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
-		}
-
-		if (!(await LocationModel.checkForLocation(destinationIATA))) {
-			await amadeus.cacheLocation(destinationIATA);
-		}
 
 		// Update search data
 		amadeus.searchData = {
@@ -89,10 +102,67 @@ export default class FlightService {
 			console.log(
 				"This was searched recently, now checking if flight is already in database"
 			);
-			/* if it exist and flight TTL is valid get the flight with their flight segments,
-				else if not exist or flight TTL is expired query the flight adapter and lastly save the flight with flight segments */
+			/* if flight exist and flight TTL is valid get the flight with their flight segments*/
+			if (await FlightModel.checkValidFlights(amadeus.searchData)) {
+				// get flights
+				console.log("Found in cached data");
+
+				let df = await FlightModel.getFlights(amadeus.searchData);
+
+				// for each flight, get their flight segments and with new array called segments
+				for (let flight of df) {
+					// update the flight data in departing flights to add the segments
+					flight.trip_type = amadeus.searchData.tripType;
+					flight.segments = await FlightSegmentModel.getSegments(
+						flight.flight_id
+					);
+				}
+
+				// if flight is round trip get flights again but switch locations and set departure date to return date
+
+				if (
+					amadeus.searchData.tripType === "round_trip" &&
+					amadeus.searchData.returnDate
+				) {
+					const returnSearchData = {
+						...amadeus.searchData,
+						origin: amadeus.searchData.destination,
+						destination: amadeus.searchData.origin,
+						departureDate: amadeus.searchData.returnDate,
+					};
+
+					let rf = await FlightModel.getFlights(returnSearchData);
+
+					for (let flight of rf) {
+						// update the flight data in departing flights to add the segments
+						flight.trip_type = amadeus.searchData.tripType;
+						flight.segments = await FlightSegmentModel.getSegments(
+							flight.flight_id
+						);
+					}
+
+					return { type: "cached", departingFlights: df, returningFlights: rf };
+				}
+
+				// return cached flight data with segments
+				return { type: "cached", departingFlights: df };
+			}
+			//else if flight not exist or flight TTL is expired query the flight adapter and lastly save the flight with flight segments
+			else {
+				// query the adapter
+				const res = await amadeus.getFlights();
+
+				// cache the flights with their segments
+				await this.cacheFlights(res.departingFlights, amadeus);
+
+				// if there is returning flights, cache them too
+				if (res.returnFlights) {
+					await this.cacheFlights(res.returnFlights, amadeus);
+				}
+				return res;
+			}
 		}
-		//else save search (logged in user only) and continue query
+		//save search (logged in user only) and continue query
 		try {
 			if (user) {
 				await SearchHistoryModel.saveSearch(user, amadeus.searchData);
@@ -105,5 +175,34 @@ export default class FlightService {
 		// Pass into the flight adapter to utilize the Amadeus api
 		const res = await amadeus.getFlights();
 		return res;
+	}
+
+	async cacheFlights(flights: any, amadeus: any) {
+		// cache each flight to database
+		for (let flight of flights) {
+			// convert total duration string to minute integer
+			const flightId = await FlightModel.cacheFlight(flight);
+			console.log("Now saving segments for flight: " + flightId);
+
+			// for each flight, cache their segment (must pass in the flight id)
+			for (const segment of flight.segments) {
+				// but first cache the location if it doesn't exist
+				if (!(await LocationModel.checkForLocation(segment.originIATA))) {
+					await amadeus.cacheLocation(segment.originIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+				}
+				if (!(await LocationModel.checkForLocation(segment.destinationIATA))) {
+					await amadeus.cacheLocation(segment.destinationIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+				}
+
+				// console.log(segment);
+
+				// also for airline if it doesn't exist
+				if (!(await AirlineModel.checkForAirline(segment.airlineIATA))) {
+					await amadeus.cacheAirline(segment.airlineIATA);
+				}
+
+				await FlightSegmentModel.cacheSegment(segment, flightId);
+			}
+		}
 	}
 }

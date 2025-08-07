@@ -59,17 +59,18 @@ CREATE TABLE locations (
 );
 
 -- Create Flights table
-CREATE TYPE flight_class_enum AS ENUM ('economy', 'business', 'first_class');
+CREATE TYPE flight_class_enum AS ENUM ('ECONOMY', 'PREMIUM_ECONOMY','BUSINESS', 'FIRST');
 
 CREATE TABLE flights (
     flight_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     airline_id UUID NOT NULL,
-    flight_number VARCHAR(10) NOT NULL,
+    -- flight_number VARCHAR(10) NOT NULL,
+    flight_number VARCHAR(10),
     flight_class flight_class_enum NOT NULL,
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
     departure_datetime TIMESTAMPTZ NOT NULL,
-    return_datetime TIMESTAMPTZ NOT NULL,
+    arrival_datetime TIMESTAMPTZ NOT NULL,
     duration_minutes SMALLINT NOT NULL,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
     currency CHAR(3) DEFAULT 'USD' NOT NULL,
@@ -86,7 +87,7 @@ CREATE TABLE flights (
 
     -- Check Constraints
     CONSTRAINT chk_duration_positive CHECK (duration_minutes >= 0),
-    CONSTRAINT chk_return_after_departure CHECK (return_datetime > departure_datetime)
+    CONSTRAINT chk_arrival_after_departure CHECK (arrival_datetime > departure_datetime)
 );
 
 
@@ -100,9 +101,9 @@ CREATE TABLE flight_segments(
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
     departure_datetime TIMESTAMPTZ NOT NULL,
-    return_datetime TIMESTAMPTZ NOT NULL,
+    arrival_datetime TIMESTAMPTZ NOT NULL,
     duration_minutes SMALLINT NOT NULL,
-    layover_minutes SMALLINT DEFAULT 0,
+    -- layover_minutes SMALLINT DEFAULT 0, Not available in Amadeus
 
     -- Foreign Key Constraints
     CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE,
@@ -115,8 +116,8 @@ CREATE TABLE flight_segments(
 
     -- Check Constraints
     CONSTRAINT chk_duration_positive CHECK (duration_minutes >= 0),
-    CONSTRAINT chk_return_after_departure CHECK (return_datetime > departure_datetime),
-    CONSTRAINT chk_layover_nonnegative CHECK (layover_minutes IS NULL OR layover_minutes >= 0)
+    CONSTRAINT chk_return_after_departure CHECK (arrival_datetime > departure_datetime)
+    -- CONSTRAINT chk_layover_nonnegative CHECK (layover_minutes IS NULL OR layover_minutes >= 0)
 
 );
 

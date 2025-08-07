@@ -5,6 +5,7 @@ import type {
 
 import LocationModel from "../models/location-model.js";
 import AirlineModel from "../models/airline-model.js";
+import stringToMins from "../utils/iso8601.js";
 
 declare var process: {
 	env: {
@@ -175,27 +176,76 @@ export class AmadeusAdapter implements FlightProvider {
 					flight.itineraries[0].segments[0].carrierCode
 				),
 				origin: flight.itineraries[0].segments[0].departure.iataCode,
-				origin_datetime: flight.itineraries[0].segments[0].departure.at,
 				destination:
 					flight.itineraries[0].segments[
 						flight.itineraries[0].segments.length - 1
 					].arrival.iataCode,
-				destination_datetime:
+				departure_datetime: flight.itineraries[0].segments[0].departure.at,
+				arrival_datetime:
 					flight.itineraries[0].segments[
 						flight.itineraries[0].segments.length - 1
 					].arrival.at,
-				price: {
-					currency: flight.price.currency,
-					total_price: flight.price.total,
-				},
+				duration_minutes: stringToMins(flight.itineraries[0].duration),
+				price: flight.price.total,
+				currency: flight.price.currency,
+				flight_class: this.searchData.flightClass,
 				trip_type: this.searchData.tripType,
-				total_duration: flight.itineraries[0].duration,
 				num_segments: flight.itineraries[0].segments.length,
-				segments: flight.itineraries[0].segments,
+				segments: await this.listSegments(flight.itineraries[0].segments),
 			});
 		}
 
 		return list;
+	}
+
+	/* 				"departure": {
+                        "iataCode": "AUS",
+                        "at": "2025-08-08T15:30:00"
+                    },
+                    "arrival": {
+                        "iataCode": "LAX",
+                        "terminal": "7",
+                        "at": "2025-08-08T17:02:00"
+                    },
+                    "carrierCode": "UA",
+                    "number": "5214",
+                    "aircraft": {
+                        "code": "E7W"
+                    },
+                    "operating": {
+                        "carrierName": "SKYWEST DBA UNITED EXPRESS"
+                    },
+                    "duration": "PT3H32M",
+                    "id": "1",
+                    "numberOfStops": 0,
+                    "blacklistedInEU": false */
+
+	/*
+					 {
+                        "id": 1,
+                        "origin": "AUS",
+                        "destination": "LAX",
+                        "departure_datetime": "2025-08-08T15:30:00.000Z",
+                        "arrival_datetime": "2025-08-08T17:02:00.000Z",
+						duration_mins: 290,
+                        "airline": "UA"
+						
+                    }
+					*/
+	async listSegments(segments: any) {
+		let adeonaSegments: Array<object> = [];
+		for (let segment of segments) {
+			adeonaSegments.push({
+				segmentNumber: segment.id,
+				originIATA: segment.departure.iataCode,
+				destinationIATA: segment.arrival.iataCode,
+				departureDateTime: segment.departure.at,
+				arrivalDateTime: segment.arrival.at,
+				durationMins: stringToMins(segment.duration),
+				airlineIATA: segment.carrierCode,
+			});
+		}
+		return adeonaSegments;
 	}
 
 	async translateAdeonaToAmadeus(originDestinations: any, passengers: any) {
@@ -205,7 +255,7 @@ export class AmadeusAdapter implements FlightProvider {
 			travelers: passengers,
 			sources: ["GDS"], //change GDS to NDC for current and most recent prices
 			searchCriteria: {
-				maxFlightOffers: 25,
+				maxFlightOffers: 1,
 				flightFilters: {
 					cabinRestrictions: [
 						{
@@ -231,6 +281,12 @@ export class AmadeusAdapter implements FlightProvider {
 
 		// translate adeona form data to Amadeus query params for POST method
 
+		if (!(await LocationModel.checkForLocation(this.searchData.origin))) {
+			await this.cacheLocation(this.searchData.origin);
+		}
+		if (!(await LocationModel.checkForLocation(this.searchData.destination))) {
+			await this.cacheLocation(this.searchData.destination);
+		}
 		// Translate rounds trips to adeona's originDestinations array
 
 		// Departure origin destination
@@ -332,33 +388,10 @@ export class AmadeusAdapter implements FlightProvider {
 			const returnFlights = await response.json();
 			const rf = await this.listFlights(returnFlights.data);
 
-			return { departingFlights: df, returnFlights: rf };
+			return { type: "amadeus", departingFlights: df, returnFlights: rf };
 		}
 
 		// return flights
-		return { departingFlights: df };
+		return { type: "amadeus", departingFlights: df };
 	}
 }
-
-/*
-		
-		GET METHOD FORMAT
-			const adeonaToAmadeus = {
-			originLocationCode: await LocationModel.getIATA(this.searchData.origin),
-			destinationLocationCode: await LocationModel.getIATA(
-				this.searchData.destination
-			),
-			departureDate: this.searchData.departureDate,
-			returnDate:
-				this.searchData.tripType === "round_trip" ? this.searchData.returnDate : null,
-			adults: this.searchData.adults,
-			children: this.searchData.children,
-			infants: this.searchData.infants,
-			travelClass: this.searchData.flightClass,
-			includeAirlineCodes: this.searchData.includeAirlines,
-			excludeAirlineCodes: this.searchData.excludeAirlines,
-			nonStop: this.searchData.nonStop,
-			currencyCode: this.searchData.currency,
-			maxPrice: this.searchData.maxPrice,
-		};
-		*/
