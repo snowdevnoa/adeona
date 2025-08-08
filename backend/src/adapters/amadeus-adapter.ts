@@ -234,9 +234,10 @@ export class AmadeusAdapter implements FlightProvider {
 					*/
 	async listSegments(segments: any) {
 		let adeonaSegments: Array<object> = [];
-		for (let segment of segments) {
+		let count = 1;
+		for (const segment of segments) {
 			adeonaSegments.push({
-				segmentNumber: segment.id,
+				segmentNumber: count,
 				originIATA: segment.departure.iataCode,
 				destinationIATA: segment.arrival.iataCode,
 				departureDateTime: segment.departure.at,
@@ -244,6 +245,7 @@ export class AmadeusAdapter implements FlightProvider {
 				durationMins: stringToMins(segment.duration),
 				airlineIATA: segment.carrierCode,
 			});
+			count++;
 		}
 		return adeonaSegments;
 	}
@@ -255,7 +257,7 @@ export class AmadeusAdapter implements FlightProvider {
 			travelers: passengers,
 			sources: ["GDS"], //change GDS to NDC for current and most recent prices
 			searchCriteria: {
-				maxFlightOffers: 1,
+				maxFlightOffers: 10,
 				flightFilters: {
 					cabinRestrictions: [
 						{
@@ -281,6 +283,7 @@ export class AmadeusAdapter implements FlightProvider {
 
 		// translate adeona form data to Amadeus query params for POST method
 
+		// cache location at the method level
 		if (!(await LocationModel.checkForLocation(this.searchData.origin))) {
 			await this.cacheLocation(this.searchData.origin);
 		}

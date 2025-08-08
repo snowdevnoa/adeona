@@ -41,6 +41,9 @@ export default class FlightModel {
 			duration_minutes,
 			segments,
 		} = flight;
+
+		// console.log(flight.origin + ' this is what is passed to the cache')
+		
 		/*
             airline_id UUID NOT NULL,
             flight_number VARCHAR(10),

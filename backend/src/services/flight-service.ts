@@ -90,6 +90,14 @@ export default class FlightService {
 			searchData.destination
 		);
 
+		// Need to cache location before checking flight cache
+		if (!(await LocationModel.checkForLocation(originIATA))) {
+			await amadeus.cacheLocation(originIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+		}
+		if (!(await LocationModel.checkForLocation(destinationIATA))) {
+			await amadeus.cacheLocation(destinationIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+		}
+
 		// Update search data
 		amadeus.searchData = {
 			...searchData,
