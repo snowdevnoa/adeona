@@ -5,8 +5,8 @@ export default class FlightSegmentModel {
 		/* incoming segment data
 			{
              	"segmentNumber": "1",
-                "originIATA": "SEA",
-                "destinationIATA": "HNL",
+                "origin": "SEA",
+                "destination": "HNL",
                 "departureDateTime": "2025-08-08T20:40:00",
                 "arrivalDateTime": "2025-08-08T23:34:00",
                 "durationMins": 670,
@@ -17,9 +17,9 @@ export default class FlightSegmentModel {
 
 		const {
 			segmentNumber,
-			originIATA,
+			origin,
 			departureDateTime,
-			destinationIATA,
+			destination,
 			arrivalDateTime,
 			durationMins,
 			airlineIATA,
@@ -50,8 +50,8 @@ export default class FlightSegmentModel {
 				flightId,
 				segmentNumber,
 				airlineIATA,
-				originIATA,
-				destinationIATA,
+				origin,
+				destination,
 				departureDateTime,
 				arrivalDateTime,
 				durationMins,

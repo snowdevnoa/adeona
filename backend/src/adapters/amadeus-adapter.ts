@@ -238,8 +238,8 @@ export class AmadeusAdapter implements FlightProvider {
 		for (const segment of segments) {
 			adeonaSegments.push({
 				segmentNumber: count,
-				originIATA: segment.departure.iataCode,
-				destinationIATA: segment.arrival.iataCode,
+				origin: segment.departure.iataCode,
+				destination: segment.arrival.iataCode,
 				departureDateTime: segment.departure.at,
 				arrivalDateTime: segment.arrival.at,
 				durationMins: stringToMins(segment.duration),

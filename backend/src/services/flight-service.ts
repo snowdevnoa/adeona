@@ -134,8 +134,8 @@ export default class FlightService {
 				) {
 					const returnSearchData = {
 						...amadeus.searchData,
-						origin: amadeus.searchData.destination,
-						destination: amadeus.searchData.origin,
+						origin: destinationIATA,
+						destination: originIATA,
 						departureDate: amadeus.searchData.returnDate,
 					};
 
@@ -188,6 +188,18 @@ export default class FlightService {
 	async cacheFlights(flights: any, amadeus: any) {
 		// cache each flight to database
 		for (let flight of flights) {
+			console.log("Checking origin location:", flight.origin);
+
+			// Ensure origin exists
+			if (!(await LocationModel.checkForLocation(flight.origin))) {
+				await amadeus.cacheLocation(flight.origin);
+			}
+
+			console.log("Checking destination location:", flight.destination);
+
+			if (!(await LocationModel.checkForLocation(flight.destination))) {
+				await amadeus.cacheLocation(flight.destination);
+			}
 			// convert total duration string to minute integer
 			const flightId = await FlightModel.cacheFlight(flight);
 			console.log("Now saving segments for flight: " + flightId);
@@ -195,11 +207,11 @@ export default class FlightService {
 			// for each flight, cache their segment (must pass in the flight id)
 			for (const segment of flight.segments) {
 				// but first cache the location if it doesn't exist
-				if (!(await LocationModel.checkForLocation(segment.originIATA))) {
-					await amadeus.cacheLocation(segment.originIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+				if (!(await LocationModel.checkForLocation(segment.origin))) {
+					await amadeus.cacheLocation(segment.origin); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
 				}
-				if (!(await LocationModel.checkForLocation(segment.destinationIATA))) {
-					await amadeus.cacheLocation(segment.destinationIATA); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+				if (!(await LocationModel.checkForLocation(segment.destination))) {
+					await amadeus.cacheLocation(segment.destination); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
 				}
 
 				// console.log(segment);
