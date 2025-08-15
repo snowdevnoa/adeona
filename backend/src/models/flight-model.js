@@ -6,7 +6,15 @@ export default class FlightModel {
 	static async checkValidFlights(search) {
 		console.log("Checking flight in database");
 
-		const { origin, destination, departureDate } = search;
+		const {
+			origin,
+			destination,
+			departureDate,
+			flightClass,
+			adults,
+			children,
+			infants,
+		} = search;
 
 		const results = await pool.query(
 			`
@@ -17,9 +25,21 @@ export default class FlightModel {
             WHERE origin_loc.iata_code = $1 
             AND destination_loc.iata_code = $2
             AND CAST(flights.departure_datetime AS DATE) = $3::DATE
+			AND flights.flight_class = $4
+			AND flights.adults = $5
+			AND flights.children = $6
+			AND flights.infants = $7
             AND last_synced_at >= (NOW() - INTERVAL '2 minutes')
 			LIMIT 1`,
-			[origin, destination, departureDate]
+			[
+				origin,
+				destination,
+				departureDate,
+				flightClass,
+				adults,
+				children,
+				infants,
+			]
 		);
 		// console.log(Date("2025-08-07 07:01:00+00"));
 		return results.rows.length > 0;
@@ -37,13 +57,16 @@ export default class FlightModel {
 			arrival_datetime,
 			price,
 			currency,
+			adults,
+			children,
+			infants,
 			flight_class,
 			duration_minutes,
 			segments,
 		} = flight;
 
 		// console.log(flight.origin + ' this is what is passed to the cache')
-		
+
 		/*
             airline_id UUID NOT NULL,
             flight_number VARCHAR(10),
@@ -69,7 +92,10 @@ export default class FlightModel {
 			arrival_datetime, 
 			duration_minutes, 
 			price, 
-			currency, 
+			currency,
+			adults,
+			children,
+			infants, 
 			num_segments)
 			VALUES(
 			(SELECT airlines.airline_id FROM airlines WHERE airlines.iata_code = $1), 
@@ -81,7 +107,10 @@ export default class FlightModel {
 			$7, 
 			$8, 
 			$9, 
-			$10
+			$10,
+			$11,
+			$12,
+			$13
 			)
             RETURNING flight_id
 			`,
@@ -95,6 +124,9 @@ export default class FlightModel {
 				duration_minutes,
 				price,
 				currency,
+				adults,
+				children,
+				infants,
 				segments.length,
 			]
 		);
@@ -108,7 +140,15 @@ export default class FlightModel {
 	static async getFlights(search) {
 		console.log("grabbing flights in database");
 
-		const { origin, destination, departureDate } = search;
+		const {
+			origin,
+			destination,
+			departureDate,
+			flightClass,
+			adults,
+			children,
+			infants,
+		} = search;
 
 		const results = await pool.query(
 			`
@@ -123,6 +163,9 @@ export default class FlightModel {
     		flights.duration_minutes,
     		flights.price,
     		flights.currency,
+			flights.adults,
+			flights.children,
+			flights.infants,
 			flights.flight_class,
     		flights.num_segments,
     		flights.last_synced_at
@@ -134,8 +177,20 @@ export default class FlightModel {
     		origin_loc.iata_code = $1 
     		AND destination_loc.iata_code = $2
     		AND CAST(flights.departure_datetime AS DATE) = $3::DATE
+			AND flights.flight_class = $4
+			AND flights.adults = $5
+			AND flights.children = $6
+			AND flights.infants = $7
     		AND last_synced_at >= (NOW() - INTERVAL '2 minutes')`,
-			[origin, destination, departureDate]
+			[
+				origin,
+				destination,
+				departureDate,
+				flightClass,
+				adults,
+				children,
+				infants,
+			]
 		);
 		return results.rows;
 	}

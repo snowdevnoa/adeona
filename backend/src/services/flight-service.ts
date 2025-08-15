@@ -7,6 +7,18 @@ import FlightModel from "../models/flight-model.js";
 import FlightSegmentModel from "../models/flight-segments-model.js";
 import AirlineModel from "../models/airline-model.js";
 
+/*
+
+NOTE TO SELF, IF SEARCH ONE WAY SUCCESSFUL GOOD, 
+BUT IF SEARCHING ROUND TRIP SAME CRITERIA (except for trip type) 
+IT IS SUCCESSFUL BUT ONLY GETS DEPARTING FLIGHTS STILL MISSING RETURNING FLIGHTS
+
+SOLUTION:
+Update search history table and search history model to include passengers
+
+Update flights table and flight model to include passengers
+
+*/
 export default class FlightService {
 	/*
     incoming form data
@@ -56,6 +68,13 @@ export default class FlightService {
 					throw new Error("Return date cannot be before departure date");
 			}
 			/* Validate adults, children, infants are integer number */
+			if (Number(searchData.adults) <= 0) {
+				throw new Error("There must be at least one adult");
+			}
+
+			// if(!Number(searchData.adults) || !Number(searchData.children) || !Number(searchData.infants)){
+			// 		throw new Error("Passenger must be a number");
+			// }
 		} catch (err) {
 			if (err instanceof Error) throw Error(err.message);
 		}
@@ -82,13 +101,15 @@ export default class FlightService {
 
 		console.log(`${searchData.origin} to ${searchData.destination}`);
 
-		const { iata: originIATA } = await amadeus.fetchLocationDetails(
-			searchData.origin
-		);
+		const originLoc = await amadeus.fetchLocationDetails(searchData.origin);
+		if (!originLoc) throw new Error("Origin location not found");
+		const { iata: originIATA } = originLoc;
 
-		const { iata: destinationIATA } = await amadeus.fetchLocationDetails(
+		const destinationLoc = await amadeus.fetchLocationDetails(
 			searchData.destination
 		);
+		if (!destinationLoc) throw new Error("Destination location not found");
+		const { iata: destinationIATA } = destinationLoc;
 
 		// Need to cache location before checking flight cache
 		if (!(await LocationModel.checkForLocation(originIATA))) {
@@ -105,7 +126,7 @@ export default class FlightService {
 			destination: destinationIATA,
 		};
 
-		/*Check is search is frequent, true check the flight tables*/
+		/*Check is search is frequent, if true check the flight tables*/
 		if (await SearchHistoryModel.checkSearchFrequency(amadeus.searchData)) {
 			console.log(
 				"This was searched recently, now checking if flight is already in database"
@@ -140,6 +161,25 @@ export default class FlightService {
 					};
 
 					let rf = await FlightModel.getFlights(returnSearchData);
+
+					// Check to see if returning flights exists (Problem from one way trips successful, then round trips only get departing but missing return flight)
+					if (rf.length === 0) {
+						console.log(
+							"Cache data for return flights don't exist, now grabbing from Amadeus to save"
+						);
+						const returnAmadeus = new AmadeusAdapter({
+							...returnSearchData,
+							tripType: "one_way",
+						});
+						await returnAmadeus.requestAccessToken();
+						const returnResults = await returnAmadeus.getFlights();
+						// Cache rturning flights
+						await this.cacheFlights(
+							returnResults.departingFlights,
+							returnAmadeus
+						);
+						rf = await FlightModel.getFlights(returnSearchData);
+					}
 
 					for (let flight of rf) {
 						// update the flight data in departing flights to add the segments

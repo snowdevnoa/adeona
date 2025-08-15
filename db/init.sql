@@ -74,6 +74,9 @@ CREATE TABLE flights (
     duration_minutes SMALLINT NOT NULL,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
     currency CHAR(3) DEFAULT 'USD' NOT NULL,
+    adults SMALLINT NOT NULL,
+    children SMALLINT NOT NULL,
+    infants SMALLINT NOT NULL,
     num_segments SMALLINT NOT NULL CHECK (num_segments >= 1),
     api_source VARCHAR(100),
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -187,6 +190,9 @@ CREATE TABLE search_history(
     departure_date DATE NOT NULL,
     return_date DATE,
     trip_type TEXT NOT NULL, -- "one-way", "round-trip"
+    adults SMALLINT NOT NULL,
+    children SMALLINT NOT NULL,
+    infants SMALLINT NOT NULL,
     
     filters JSONB, -- optional: class, stops, airline preferences, etc.
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,

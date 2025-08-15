@@ -81,23 +81,39 @@ export class AmadeusAdapter implements FlightProvider {
 		);
 		const data = await res.json();
 		// console.log(data);
-		const loc = data.data[0];
-		// console.log(loc);
-		return {
-			iata: loc.iataCode,
-			airportName: loc.name,
-			city: loc.address.cityName,
-			countryCode: loc.address.countryCode,
-			country: loc.address.countryName,
-		};
+		// if location is an iataCode, get the location with matching iata code
+		if (iataCode.length === 3) {
+			for (let location of data.data) {
+				if (location.iataCode === iataCode) {
+					return {
+						iata: location.iataCode,
+						airportName: location.name,
+						city: location.address.cityName,
+						countryCode: location.address.countryCode,
+						country: location.address.countryName,
+					};
+				}
+			}
+		} else {
+			const loc = data.data[0];
+			// console.log(loc);
+			return {
+				iata: loc.iataCode,
+				airportName: loc.name,
+				city: loc.address.cityName,
+				countryCode: loc.address.countryCode,
+				country: loc.address.countryName,
+			};
+		}
 	}
 
-	async cacheLocation(location: any) {
+	async cacheLocation(location: string) {
 		try {
 			const loc = await this.fetchLocationDetails(location);
+			if (!loc) throw Error;
 			await LocationModel.insertNewLocation(loc);
 		} catch (err) {
-			throw Error("Cannot get details for new origin location");
+			throw Error("Cannot get details for new location");
 		}
 	}
 
@@ -188,6 +204,9 @@ export class AmadeusAdapter implements FlightProvider {
 				duration_minutes: stringToMins(flight.itineraries[0].duration),
 				price: flight.price.total,
 				currency: flight.price.currency,
+				adults: this.searchData.adults,
+				children: this.searchData.children,
+				infants: this.searchData.infants,
 				flight_class: this.searchData.flightClass,
 				trip_type: this.searchData.tripType,
 				num_segments: flight.itineraries[0].segments.length,
