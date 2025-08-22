@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import SplashScreen from "@/components/global/SplashScreen";
 import PageWrapper from "@/components/global/PageWrapper";
-import Header from "@/components/global/Header";
+import Adeona from "@/components/global/Adeona";
 import RegisterForm from "@/components/user/RegisterForm";
 import { motion } from "motion/react";
 
@@ -27,7 +27,7 @@ export default function Register() {
 	) : (
 		<PageWrapper className="bg-[var(--cosmic-latte-200)] items-center justify-center min-h-screen  lg:flex-row">
 			<motion.div className="lg:bg-[url(/backgrounds/james-donaldson-toPRrcyAIUY-unsplash.jpg)] lg:min-h-screen lg:flex-1 bg-cover bg-center lg:flex lg:justify-center lg:items-center">
-				<Header />
+				<Adeona />
 			</motion.div>
 
 			<motion.div

@@ -1,13 +1,16 @@
 import Link from "next/link";
 import MainNav from "@/components/global/MainNav";
 import SecondaryNav from "@/components/global/SecondaryNav";
-
+import Header from "@/components/flight/Header";
+import { QueryClient } from "@tanstack/react-query";
 export default async function Page() {
+
+	const queryClient = new QueryClient();
 
 	return (
 		<main>
 			<MainNav />
-			<h1 className="text-3xl font-bold">Hello world! no</h1>
+			<Header />
 			<SecondaryNav />
 		</main>
 	);

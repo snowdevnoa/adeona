@@ -32,8 +32,8 @@ export default function MainNav() {
 					exit={{ x: -100, opacity: 0 }}
 					transition={{ ease: "easeInOut", duration: 0.3 }}
 				>
-					<div className="w-full h-[125px] bg-[var(--cosmic-latte-200)] flex flex-col items-center mt-[1rem]">
-						<Logo onClick={toggleNav} />
+					<div className="w-full h-[125px] bg-[var(--cosmic-latte-200)] flex flex-col justify-center items-center">
+						<Logo onClick={toggleNav} size={60}/>
 						<h1 className="text-[var(--adeona-blue-900)] text-2xl font-bold mt-[0.5rem]">
 							adeona
 						</h1>
@@ -71,7 +71,8 @@ export default function MainNav() {
 			) : (
 				<Logo
 					onClick={toggleNav}
-					className="absolute top-0 right-[10px] mr-[1rem] mt-[1rem] hover:cursor-pointer"
+					size={60}
+					className="absolute top-0 right-[10px] mr-[1rem] mt-[1rem] z-5 hover:cursor-pointer"
 					animate={{ opacity: [0, 1] }}
 					whileHover={{
 						rotate: [0, 360],

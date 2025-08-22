@@ -37,7 +37,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    restart: always
+    restart: unless-stopped
   frontend: #similar structure to backend
     build: ./frontend
     container_name: adeona-frontend
@@ -52,7 +52,7 @@ services:
       - frontend
     depends_on:
       - backend
-    restart: always
+    restart: unless-stopped
 
 networks:
   backend:

@@ -34,7 +34,7 @@ export default function SplashScreen() {
 			className="bg-[url(/backgrounds/james-donaldson-toPRrcyAIUY-unsplash.jpg)] bg-cover bg-center
 		h-dvh flex flex-col justify-center items-center"
 		>
-			<Logo />
+			<Logo size={75}/>
 
 			<motion.h1
 				className="text-6xl font-bold mt-[1rem] flex row"
@@ -45,7 +45,7 @@ export default function SplashScreen() {
 				{adeona.map((char, index) => (
 					<motion.span
 						key={index}
-						className="text-(--adeona-blue-900)"
+						className="text-(--adeona-blue-900) h-[75px]"
 						variants={letter}
 					>
 						{char}

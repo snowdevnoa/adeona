@@ -1,8 +1,8 @@
 import Logo from "./Logo";
-export default function Header() {
+export default function Adeona() {
 	return (
 		<header className="flex flex-col justify-center items-center">
-			<Logo />
+			<Logo size={75}/>
 			<h1 className="text-6xl font-bold my-[0.5rem]">
 				<span className="text-[var(--adeona-blue-900)]">ade</span>
 				<span className="lg:text-[var(--cosmic-latte-200)]">ona</span>

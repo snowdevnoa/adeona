@@ -13,7 +13,7 @@ export default function SecondaryNav() {
 				href="/profile"
 				className={`link ${
 					pathname === "/profile" ? "border-b-[3px]" : ""
-				} font-bold mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
+				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Profile</p>
 				<Profile />
@@ -22,7 +22,7 @@ export default function SecondaryNav() {
 				href="/"
 				className={`link ${
 					pathname === "/" ? "border-b-[3px]" : ""
-				} font-bold mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
+				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Flights</p>
 				<Airplane />
@@ -31,7 +31,7 @@ export default function SecondaryNav() {
 				href="/"
 				className={`link ${
 					pathname === "/saved" ? "border-b-[3px]" : ""
-				} font-bold mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
+				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Saved</p>
 				<Bookmark />
