@@ -8,7 +8,7 @@ import Profile from "@/assets/Profile.svg";
 export default function SecondaryNav() {
 	const pathname = usePathname();
 	return (
-		<nav className="absolute bottom-0 w-full bg-[var(--cosmic-latte-200)] min-h-[5rem] flex justify-center items-center">
+		<nav className="relative bottom-0 w-full bg-[var(--cosmic-latte-200)] min-h-[5rem] flex justify-center items-center">
 			<Link
 				href="/profile"
 				className={`link ${

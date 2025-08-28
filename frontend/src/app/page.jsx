@@ -1,17 +1,16 @@
 import Link from "next/link";
 import MainNav from "@/components/global/MainNav";
 import SecondaryNav from "@/components/global/SecondaryNav";
-import Header from "@/components/flight/Header";
-import { QueryClient } from "@tanstack/react-query";
+import FlightPage from "@/components/flight/FlightPage";
+import Provider from "./provider";
 export default async function Page() {
-
-	const queryClient = new QueryClient();
-
 	return (
 		<main>
-			<MainNav />
-			<Header />
-			<SecondaryNav />
+			<Provider>
+				<MainNav />
+				<FlightPage />
+				<SecondaryNav />
+			</Provider>
 		</main>
 	);
 }

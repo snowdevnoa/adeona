@@ -49,7 +49,9 @@ export default class FlightService {
 
 		try {
 			/* Verify location and origin are strings and not some malicious code. Convert them to strings first before checking*/
-			if (!searchData.origin || !searchData.destination)
+			if (!searchData.origin)
+				throw new Error("Invalid origin");
+			if (!searchData.destination)
 				throw new Error("Invalid destination");
 			/* Ensure departure date is >= current date*/
 			if (new Date(searchData.departureDate) < currentDate)
