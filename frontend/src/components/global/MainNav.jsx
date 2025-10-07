@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Logo from "./Logo";
 import Link from "next/link";
-import ArrowReturn from "@/assets/ArrowReturn.svg";
+import ArrowReturn from "@/assets/global/ArrowReturn.svg";
 import { motion, AnimatePresence } from "motion/react";
 
 const MotionArrow = motion.create(ArrowReturn);

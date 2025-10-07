@@ -2,6 +2,8 @@
 import FlightForm from "./FlightForm";
 import Header from "./Header";
 import { useMutation } from "@tanstack/react-query"; // use mutation for user driven events
+import FlightList from "./FlightList";
+import NoFlights from "./NoFlights";
 
 export default function FlightPage() {
 	const mutation = useMutation({
@@ -44,8 +46,27 @@ export default function FlightPage() {
 	}
 
 	return (
+		/*
+  The flight search form section stays mounted even after a successful search.
+  Instead of conditionally rendering the form section, we toggle the visibility through CSS.
+
+  Reason:
+  - The form is complex and contains internal refs, passenger selectors, etc.
+  - Unmounting and remounting would reset all uncontrolled inputs and refs,
+    making "going back" to edit a previous search cumbersome.
+  - Keeping it mounted preserves all entered data and UI state without
+    additional state management.
+
+  When the user clicks "reset" (mutation.reset()),  simply un-hide the section
+  and the user sees their original form state intact.
+*/
+
 		<>
-			<section className="bg-[url(/backgrounds/eibner-saliba-3T9dDY0WqDI-unsplash.jpg)] flex flex-col items-center bg-cover bg-center h-auto pb-4">
+			<section
+				className={`bg-[url(/backgrounds/eibner-saliba-3T9dDY0WqDI-unsplash.jpg)] flex flex-col items-center bg-cover bg-center h-auto pb-4 ${
+					mutation.isSuccess ? "hidden" : ""
+				}`}
+			>
 				<Header />
 				<FlightForm onSubmit={searchFlights} />
 				{mutation.isError && (
@@ -53,7 +74,19 @@ export default function FlightPage() {
 				)}
 			</section>
 			{mutation.isLoading && <p className="text-4xl">Searching. . .</p>}
-			{mutation.isSuccess && <p>{JSON.stringify(mutation.data)}</p>}
+			{mutation.isSuccess && (
+				<>
+					<Header />
+					{mutation.data.departingFlights.length === 0 ? (
+						<NoFlights mutation={mutation}/>
+					) : (
+						<FlightList
+							results={mutation.data}
+							mutation={mutation}
+						/>
+					)}
+				</>
+			)}
 		</>
 	);
 }

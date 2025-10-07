@@ -2,12 +2,12 @@
 import Form from "next/form";
 import MainButton from "../global/MainButton";
 import SecondaryButton from "../global/SecondaryButton";
-import Search from "assets/Search.svg";
 import Input from "@/components/global/Input";
 import SelectDropdown from "../global/SelectDropdown";
 import { useState, useRef } from "react";
-import Passengers from "@/assets/Passenger.svg";
-import Dropdown from "@/assets/Dropdown.svg";
+import Search from "@/assets/flight/Search.svg";
+import Passengers from "@/assets/flight/Passenger.svg";
+import Dropdown from "@/assets/global/Dropdown.svg";
 
 export default function FlightForm({ onSubmit }) {
 	// Get the value of all passenger types to update total passengers
@@ -153,13 +153,13 @@ export default function FlightForm({ onSubmit }) {
 						Update
 					</SecondaryButton>
 				</div>
-				<Input
-					type="text"
+				<SelectDropdown
 					id="currency"
 					name="currency"
 					value="USD"
 					label="Currency"
 					className="max-w-[75px]"
+					values={["USD", "CAD", "YEN"]}
 				/>
 			</div>
 

@@ -365,10 +365,10 @@ export class AmadeusAdapter implements FlightProvider {
 			count++;
 		}
 
-		for (let i = 0; i < this.searchData.seniors; i++) {
-			passengers.push({ id: count.toString(), travelerType: "SENIOR" });
-			count++;
-		}
+		// for (let i = 0; i < this.searchData.seniors; i++) {
+		// 	passengers.push({ id: count.toString(), travelerType: "SENIOR" });
+		// 	count++;
+		// }
 
 		// Translate both included airlines and excluded airlines into an array
 
