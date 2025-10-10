@@ -64,4 +64,17 @@ export default class LocationModel {
 
 		return iata.rows[0].iata_code;
 	}
+
+	static async getLocationDetails(iataCode) {
+		const location = await pool.query(
+			`
+			SELECT airport_name, city
+			FROM locations
+			WHERE locations.iata_code = $1
+			`,
+			[iataCode]
+		);
+
+		return { airport: location.rows[0].airport_name, city: location.rows[0].city };
+	}
 }

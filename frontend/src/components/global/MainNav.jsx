@@ -33,7 +33,10 @@ export default function MainNav() {
 					transition={{ ease: "easeInOut", duration: 0.3 }}
 				>
 					<div className="w-full h-[125px] bg-[var(--cosmic-latte-200)] flex flex-col justify-center items-center">
-						<Logo onClick={toggleNav} size={60}/>
+						<Logo
+							onClick={toggleNav}
+							size={60}
+						/>
 						<h1 className="text-[var(--adeona-blue-900)] text-2xl font-bold mt-[0.5rem]">
 							adeona
 						</h1>

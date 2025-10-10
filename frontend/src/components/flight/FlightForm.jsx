@@ -96,7 +96,14 @@ export default function FlightForm({ onSubmit }) {
 					name="flightClass"
 					values={["ECONOMY", "PREMIUM_ECONOMY", "BUSINESS", "FIRST"]}
 				/>
-
+				<SelectDropdown
+					id="currency"
+					name="currency"
+					value="USD"
+					label="Currency"
+					className="max-w-[75px]"
+					values={["USD", "CAD", "YEN"]}
+				/>
 				<div
 					className="flex justify-center items-center space-x-2 hover:cursor-pointer"
 					onClick={() => setPassengerGroup(!passengerGroup)}
@@ -110,7 +117,8 @@ export default function FlightForm({ onSubmit }) {
 				<div
 					className={`flex flex-row ${
 						passengerGroup ? "flex" : "hidden"
-					} absolute z-2 passengers bg-black text-white py-4 px-4 space-x-2 items-center rounded-4xl translate-y-8`}
+					} absolute z-2 passengers bg-black text-white py-2 px-8 space-x-2 items-center rounded-2xl translate-y-8`}
+					onBlur={updatePassengers}
 				>
 					<Input
 						type="number"
@@ -145,22 +153,7 @@ export default function FlightForm({ onSubmit }) {
 						ref={infantsRef}
 						className="text-black"
 					/>
-					<SecondaryButton
-						type="button"
-						onClick={updatePassengers}
-						className="h-[50px] text-black"
-					>
-						Update
-					</SecondaryButton>
 				</div>
-				<SelectDropdown
-					id="currency"
-					name="currency"
-					value="USD"
-					label="Currency"
-					className="max-w-[75px]"
-					values={["USD", "CAD", "YEN"]}
-				/>
 			</div>
 
 			{/* <p className="self-end">Advanced Filters</p> */}

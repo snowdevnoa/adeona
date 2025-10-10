@@ -255,10 +255,19 @@ export class AmadeusAdapter implements FlightProvider {
 		let adeonaSegments: Array<object> = [];
 		let count = 1;
 		for (const segment of segments) {
+			const { city: originCity, airport: originAirport } =
+				await LocationModel.getLocationDetails(segment.departure.iataCode);
+			const { city: destinationCity, airport: destinationAirport } =
+				await LocationModel.getLocationDetails(segment.arrival.iataCode);
+
 			adeonaSegments.push({
 				segmentNumber: count,
 				origin: segment.departure.iataCode,
+				originCity: originCity,
+				originAirport: originAirport,
 				destination: segment.arrival.iataCode,
+				destinationCity: destinationCity,
+				destinationAirport: destinationAirport,
 				departureDateTime: segment.departure.at,
 				arrivalDateTime: segment.arrival.at,
 				durationMins: stringToMins(segment.duration),
