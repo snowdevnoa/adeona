@@ -36,7 +36,7 @@ segments: (2) [{…}, {…}]
 	segmentNumber: 1
 trip_type: "round_trip"
 */
-export default function FlightCard({ flight, selectFlight }) {
+export default function FlightCard({ flight, selectFlight, dataType }) {
 	const [toggle, setToggle] = useState(false);
 	const AirlineLogo = airlines[flight.main_airline]?.logo || Placeholder; //self note: if airline logo doesn't exist, image placeholder
 	const departureDateTime = new Date(flight.departure_datetime);
@@ -62,16 +62,41 @@ export default function FlightCard({ flight, selectFlight }) {
 
 	// SEGMENT Component
 	const segments = flight.segments.map((segment, index, segments) => {
+		// console.log(segment);
 		const SegmentAirline = airlines[segment.airlineIATA]?.logo || Placeholder;
-		const segmentDepartureDateTime = new Date(segment.departureDateTime);
-		const segmentArrivalDateTime = new Date(segment.arrivalDateTime);
+		const segmentDepartureDateTime =
+			dataType == "amadeus"
+				? new Date(segment.departureDateTime)
+				: new Date(segment.departure_datetime);
+		const segmentArrivalDateTime =
+			dataType == "amadeus"
+				? new Date(segment.arrivalDateTime)
+				: new Date(segment.arrival_datetime);
+		// Cache data is directly from db so property read is different
+		const originCity =
+			dataType == "amadeus" ? segment.originCity : segment.origin_city;
+		const originAirport =
+			dataType == "amadeus" ? segment.originAirport : segment.origin_airport;
+		const destinationCity =
+			dataType == "amadeus"
+				? segment.destinationCity
+				: segment.destination_city;
+		const destinationAirport =
+			dataType == "amadeus"
+				? segment.destinationAirport
+				: segment.destination_airport;
+
+		const durationMins =
+			dataType == "amadeus" ? segment.durationMins : segment.duration_minutes;
 
 		// layover inbetween segments - exclude last segment
 		let layoverMins = null;
 		if (index != segments.length - 1) {
-			const nextSegmentDepartureTime = new Date(
-				segments[index + 1].departureDateTime
-			);
+			const nextSegmentDepartureTime =
+				dataType == "amadeus"
+					? new Date(segments[index + 1].departureDateTime)
+					: new Date(segments[index + 1].departure_datetime);
+
 			// calculate next departure time and current arrival time difference
 			const layoverDiff = nextSegmentDepartureTime - segmentArrivalDateTime;
 			// Calculate total minutes from difference in miliseconds
@@ -86,12 +111,10 @@ export default function FlightCard({ flight, selectFlight }) {
 			>
 				<div className="flex justify-between">
 					<h2>
-						{segment.originCity.toLowerCase()} →{" "}
-						{segment.destinationCity.toLowerCase()}
+						{originCity.toLowerCase()} → {destinationCity.toLowerCase()}
 					</h2>
 					<h2 className="text-[var(--adeona-blue-700)]">
-						{Math.floor(segment.durationMins / 60)} hr{" "}
-						{segment.durationMins % 60} m
+						{Math.floor(durationMins / 60)} hr {durationMins % 60} m
 					</h2>
 				</div>
 
@@ -113,7 +136,7 @@ export default function FlightCard({ flight, selectFlight }) {
 									: ""
 								: ""}{" "}
 						</p>
-						<p>{segment.originAirport}</p>
+						<p>{originAirport}</p>
 					</div>
 					<div className="flex flex-col grow">
 						<p className="font-bold">
@@ -138,7 +161,7 @@ export default function FlightCard({ flight, selectFlight }) {
 										${layoverMins % 60 === 0 ? "" : (layoverMins % 60) + " mins"}`}
 							</span>
 						</p>
-						<p>{segment.destinationAirport}</p>
+						<p>{destinationAirport}</p>
 					</div>
 				</section>
 			</article>
@@ -204,7 +227,11 @@ export default function FlightCard({ flight, selectFlight }) {
 					{stops == 0
 						? "nonstop"
 						: stops === 1
-						? `${stops} stop in ${flight.segments[0].destinationCity.toLowerCase()}`
+						? `${stops} stop in ${
+								dataType == "amadeus"
+									? flight.segments[0].destinationCity.toLowerCase()
+									: flight.segments[0].destination_city.toLowerCase()
+						  }`
 						: `${stops} stops`}
 					{/*Self note to enter in country for 1 stop */}
 				</p>

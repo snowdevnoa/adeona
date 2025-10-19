@@ -62,19 +62,18 @@ export default function FlightPage() {
 */
 
 		<>
-			{!mutation.isPending && (
-				<section
-					className={`bg-[url(/backgrounds/eibner-saliba-3T9dDY0WqDI-unsplash.jpg)] flex flex-col items-center bg-cover bg-center h-auto pb-4 ${
-						mutation.isSuccess ? "hidden" : ""
-					}`}
-				>
-					<Header />
-					<FlightForm onSubmit={searchFlights} />
-					{mutation.isError && (
-						<p className="text-[var(--error-500)]">{mutation.error.message}</p>
-					)}
-				</section>
-			)}
+			<section
+				className={`bg-[url(/backgrounds/eibner-saliba-3T9dDY0WqDI-unsplash.jpg)] flex flex-col items-center bg-cover bg-center h-auto pb-4 ${
+					mutation.isSuccess || mutation.isPending ? "hidden" : ""
+				}`}
+			>
+				<Header />
+				<FlightForm onSubmit={searchFlights} />
+				{mutation.isError && (
+					<p className="text-[var(--error-500)]">{mutation.error.message}</p>
+				)}
+			</section>
+
 			{mutation.isPending && <p className="text-4xl">Searching. . .</p>}
 			{mutation.isSuccess && (
 				<>

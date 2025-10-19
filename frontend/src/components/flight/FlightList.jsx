@@ -45,6 +45,7 @@ export default function FlightList({ results, mutation }) {
 							key={index + 1}
 							flight={flight}
 							selectFlight={setSelectedDepartingFlight}
+							dataType={results.type}
 						/>
 					))}
 				</section>
@@ -76,6 +77,7 @@ export default function FlightList({ results, mutation }) {
 							key={index + 1}
 							flight={flight}
 							selectFlight={setSelectedReturningFlight}
+							dataType={results.type}
 						/>
 					))}
 				</section>

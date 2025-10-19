@@ -67,10 +67,15 @@ export default class FlightSegmentModel {
 			SELECT 
 			flight_segments.segment_number AS id,
 			origin_loc.iata_code AS origin,
+			origin_loc.city AS origin_city,
+			origin_loc.airport_name AS origin_airport,
 			destination_loc.iata_code AS destination,
+			destination_loc.city AS destination_city,
+			destination_loc.airport_name AS destination_airport,
 			flight_segments.departure_datetime,
 			flight_segments.arrival_datetime,
-			airlines.iata_code as airline
+			flight_segments.duration_minutes,
+			airlines.iata_code AS airline
 			FROM flight_segments
 			LEFT JOIN locations AS origin_loc ON flight_segments.origin_id = origin_loc.location_id
 			LEFT JOIN locations AS destination_loc ON flight_segments.destination_id = destination_loc.location_id

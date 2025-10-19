@@ -255,6 +255,14 @@ export class AmadeusAdapter implements FlightProvider {
 		let adeonaSegments: Array<object> = [];
 		let count = 1;
 		for (const segment of segments) {
+			// Need to check and cache location from flight segments if not exists
+			if (!(await LocationModel.checkForLocation(segment.departure.iataCode))) {
+				await this.cacheLocation(segment.departure.iataCode); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+			}
+			if (!(await LocationModel.checkForLocation(segment.arrival.iataCode))) {
+				await this.cacheLocation(segment.arrival.iataCode); // pass IATA string or resolvedOrigin object depending on your cacheLocation implementation
+			}
+
 			const { city: originCity, airport: originAirport } =
 				await LocationModel.getLocationDetails(segment.departure.iataCode);
 			const { city: destinationCity, airport: destinationAirport } =
