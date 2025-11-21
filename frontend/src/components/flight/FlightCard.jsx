@@ -62,8 +62,11 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 
 	// SEGMENT Component
 	const segments = flight.segments.map((segment, index, segments) => {
-		// console.log(segment);
-		const SegmentAirline = airlines[segment.airlineIATA]?.logo || Placeholder;
+		console.log(segment);
+		const SegmentAirline =
+			(dataType == "amadeus"
+				? airlines[segment.airlineIATA]?.logo
+				: airlines[segment.airline]?.logo) || Placeholder;
 		const segmentDepartureDateTime =
 			dataType == "amadeus"
 				? new Date(segment.departureDateTime)
@@ -98,7 +101,9 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 					: new Date(segments[index + 1].departure_datetime);
 
 			// calculate next departure time and current arrival time difference
-			const layoverDiff = nextSegmentDepartureTime - segmentArrivalDateTime;
+			const layoverDiff = Math.abs(
+			 segmentArrivalDateTime - nextSegmentDepartureTime
+			);
 			// Calculate total minutes from difference in miliseconds
 			// console.log(Math.floor(layoverDiff / 1000 / 60));
 			layoverMins = Math.floor(layoverDiff / 1000 / 60);

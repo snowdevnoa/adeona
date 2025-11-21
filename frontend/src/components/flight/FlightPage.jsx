@@ -4,6 +4,7 @@ import Header from "./Header";
 import { useMutation } from "@tanstack/react-query"; // use mutation for user driven events
 import FlightList from "./FlightList";
 import NoFlights from "./NoFlights";
+import LoadingFlights from "./LoadingFlights";
 
 export default function FlightPage() {
 	const mutation = useMutation({
@@ -74,7 +75,7 @@ export default function FlightPage() {
 				)}
 			</section>
 
-			{mutation.isPending && <p className="text-4xl">Searching. . .</p>}
+			{mutation.isPending && <LoadingFlights />}
 			{mutation.isSuccess && (
 				<>
 					<Header />
