@@ -75,6 +75,9 @@ export default class LocationModel {
 			[iataCode]
 		);
 
-		return { airport: location.rows[0].airport_name, city: location.rows[0].city };
+		return {
+			airport: location.rows[0].airport_name,
+			city: location.rows[0].city,
+		};
 	}
 }

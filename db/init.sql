@@ -50,7 +50,7 @@ CREATE TABLE airlines(
 CREATE TABLE locations (
     location_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     iata_code CHAR(3) UNIQUE NOT NULL,
-    airport_name VARCHAR(100) UNIQUE NOT NULL,
+    airport_name VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     country_code CHAR(2) NOT NULL,
     country VARCHAR(100) NOT NULL,

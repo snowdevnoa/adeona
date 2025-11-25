@@ -424,10 +424,10 @@ export class AmadeusAdapter implements FlightProvider {
 			);
 			const response = await this.fetchFlights(rtAdeonatoAmadeus);
 			// console.log("Response status for returning flights:", response.status);
-			const returnFlights = await response.json();
-			const rf = await this.listFlights(returnFlights.data);
+			const returningFlights = await response.json();
+			const rf = await this.listFlights(returningFlights.data);
 
-			return { type: "amadeus", departingFlights: df, returnFlights: rf };
+			return { type: "amadeus", departingFlights: df, returningFlights: rf };
 		}
 
 		// return flights

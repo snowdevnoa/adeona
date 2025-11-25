@@ -62,7 +62,7 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 
 	// SEGMENT Component
 	const segments = flight.segments.map((segment, index, segments) => {
-		console.log(segment);
+		// console.log(segment);
 		const SegmentAirline =
 			(dataType == "amadeus"
 				? airlines[segment.airlineIATA]?.logo
@@ -102,7 +102,7 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 
 			// calculate next departure time and current arrival time difference
 			const layoverDiff = Math.abs(
-			 segmentArrivalDateTime - nextSegmentDepartureTime
+				segmentArrivalDateTime - nextSegmentDepartureTime
 			);
 			// Calculate total minutes from difference in miliseconds
 			// console.log(Math.floor(layoverDiff / 1000 / 60));
@@ -132,16 +132,20 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 								minute: "2-digit",
 							})}
 							{/* exclude first segment, check if depature date is next calendar date from previous arrival date*/}
-							{index != 0
-								? checkNextCalendarDay(
-										segments[index - 1].arrivalDateTime,
-										segmentDepartureDateTime
-								  )
-									? "+1"
-									: ""
-								: ""}{" "}
+							{index != 0 ? (
+								checkNextCalendarDay(
+									segments[index - 1].arrivalDateTime,
+									segmentDepartureDateTime
+								) ? (
+									<sup>+1</sup>
+								) : (
+									""
+								)
+							) : (
+								""
+							)}{" "}
 						</p>
-						<p>{originAirport}</p>
+						<p className="text-sm">{originAirport}</p>
 					</div>
 					<div className="flex flex-col grow">
 						<p className="font-bold">
@@ -153,9 +157,11 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 							{checkNextCalendarDay(
 								segmentDepartureDateTime,
 								segmentArrivalDateTime
-							)
-								? "+1"
-								: ""}
+							) ? (
+								<sup>+1</sup>
+							) : (
+								""
+							)}
 							<span className="font-normal text-xs text-[var(--error-800)] ml-4">
 								{layoverMins &&
 									`layover: ${
@@ -166,7 +172,7 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 										${layoverMins % 60 === 0 ? "" : (layoverMins % 60) + " mins"}`}
 							</span>
 						</p>
-						<p>{destinationAirport}</p>
+						<p className="text-sm">{destinationAirport}</p>
 					</div>
 				</section>
 			</article>
@@ -203,9 +209,11 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 									hour: "2-digit",
 									minute: "2-digit",
 								})}
-								{checkNextCalendarDay(departureDateTime, arrivalDateTime)
-									? "+1"
-									: ""}
+								{checkNextCalendarDay(departureDateTime, arrivalDateTime) ? (
+									<sup>+1</sup>
+								) : (
+									""
+								)}
 							</p>
 							<p>{destination}</p>
 						</div>
@@ -259,14 +267,15 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 				<section className="flex flex-col py-4 space-y-8  border-t-2 border-white mt-2">
 					{/* Flight segment */}
 					{segments}
-					<SecondaryButton
-						onClick={() => {
-							selectFlight((prevState) => flight);
-							setToggle(false);
-						}}
-					>
-						Save Flight
-					</SecondaryButton>
+					{selectFlight && (
+						<SecondaryButton
+							onClick={() => {
+								selectFlight(flight);
+							}}
+						>
+							Save Flight
+						</SecondaryButton>
+					)}
 				</section>
 			)}
 		</main>

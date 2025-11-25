@@ -7,15 +7,15 @@ incoming prop results
 mutation.data = {
   type: "amadeus",
   departingFlights: [...],
-  returnFlights: [...]
+  returningFlights: [...]
 }
 */
 export default function FlightList({ results, mutation }) {
 	const [departingFlights, setDepartingFlights] = useState(
 		results.departingFlights
 	);
-	const [returnFlights, setReturnFlights] = useState(
-		results.returnFlights ? results.returnFlights : null
+	const [returningFlights, setreturningFlights] = useState(
+		results.returningFlights ? results.returningFlights : null
 	);
 	const [selectedDepartingFlight, setSelectedDepartingFlight] = useState(null);
 	const [selectedReturningFlight, setSelectedReturningFlight] = useState(null);
@@ -53,7 +53,7 @@ export default function FlightList({ results, mutation }) {
 		);
 
 	//if trip is round trip and return flight has not been selected, return return list
-	if (returnFlights && !selectedReturningFlight)
+	if (returningFlights && !selectedReturningFlight)
 		return (
 			<main className="px-4">
 				<section className="flex mt-8">
@@ -72,7 +72,7 @@ export default function FlightList({ results, mutation }) {
 				</section>
 				<section className="flex flex-col">
 					{/* Display individual flight card*/}
-					{returnFlights.map((flight, index) => (
+					{returningFlights.map((flight, index) => (
 						<FlightCard
 							key={index + 1}
 							flight={flight}
@@ -86,7 +86,39 @@ export default function FlightList({ results, mutation }) {
 
 	return (
 		<>
+			<button
+				className="bg-[var(--adeona-blue-900)] py-[10px] px-[1rem] rounded-full flex justify-center items-center"
+				onClick={() => {
+					selectedReturningFlight
+						? setSelectedReturningFlight(null)
+						: setSelectedDepartingFlight(null);
+				}}
+			>
+				<Back stroke="var(--cosmic-latte-300)" />
+				<p className="text-[var(--cosmic-latte-300)]">Back</p>
+			</button>
+			<button
+				onClick={() => {
+					console.log(departingFlights);
+					console.log(returningFlights);
+					console.log(results)
+				}}
+			>
+				Check flights
+			</button>
 			<p>Overview</p>
+			{selectedDepartingFlight && (
+				<FlightCard
+					flight={selectedDepartingFlight}
+					dataType={results.type}
+				/>
+			)}
+			{selectedReturningFlight && (
+				<FlightCard
+					flight={selectedReturningFlight}
+					dataType={results.type}
+				/>
+			)}
 		</>
 	);
 }

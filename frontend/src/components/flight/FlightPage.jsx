@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query"; // use mutation for user dr
 import FlightList from "./FlightList";
 import NoFlights from "./NoFlights";
 import LoadingFlights from "./LoadingFlights";
+import PageWrapper from "../global/PageWrapper";
 
 export default function FlightPage() {
 	const mutation = useMutation({
@@ -77,7 +78,7 @@ export default function FlightPage() {
 
 			{mutation.isPending && <LoadingFlights />}
 			{mutation.isSuccess && (
-				<>
+				<PageWrapper className="justify-center items-center">
 					<Header />
 					{mutation.data.departingFlights.length === 0 ? (
 						<NoFlights mutation={mutation} />
@@ -87,7 +88,7 @@ export default function FlightPage() {
 							mutation={mutation}
 						/>
 					)}
-				</>
+				</PageWrapper>
 			)}
 		</>
 	);
