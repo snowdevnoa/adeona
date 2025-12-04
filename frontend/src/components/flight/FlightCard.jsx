@@ -3,6 +3,7 @@ import { useState } from "react";
 import Dropdown from "@/assets/global/Dropdown.svg";
 import SecondaryButton from "../global/SecondaryButton";
 import Placeholder from "@/assets/global/Placeholder.svg";
+import { motion } from "framer-motion";
 
 /* incoming flight info
 
@@ -36,8 +37,13 @@ segments: (2) [{…}, {…}]
 	segmentNumber: 1
 trip_type: "round_trip"
 */
-export default function FlightCard({ flight, selectFlight, dataType }) {
-	const [toggle, setToggle] = useState(false);
+export default function FlightCard({
+	flight,
+	selectFlight,
+	dataType,
+	variants,
+}) {
+	const [status, setStatus] = useState("open" | "closed");
 	const AirlineLogo = airlines[flight.main_airline]?.logo || Placeholder; //self note: if airline logo doesn't exist, image placeholder
 	const departureDateTime = new Date(flight.departure_datetime);
 	const arrivalDateTime = new Date(flight.arrival_datetime);
@@ -180,13 +186,15 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 	});
 
 	return (
-		<main
+		<motion.div
 			className={
-				(toggle
+				(status === "open"
 					? "bg-[var(--adeona-blue-100)]" + " text-black"
 					: "bg-[var(--adeona-blue-700)]" + " text-white") +
-				" mt-8 rounded-lg p-4 md:w-[704px]"
+				" rounded-lg p-4 w-full "
 			}
+			variants={variants}
+			animate={status}
 		>
 			<section className="flex">
 				<AirlineLogo />
@@ -226,7 +234,7 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 					{/* Flight duration */}
 					<p
 						className={
-							(toggle
+							(status === "open"
 								? "text-[var(--adeona-blue-700)]"
 								: "text-[var(--adeona-blue-900)]") + " font-medium"
 						}
@@ -235,8 +243,8 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 					</p>
 				</div>
 			</section>
-			<section className="flex justify-between">
-				<p className={toggle ? "font-bold" : ""}>
+			<section className="flex flex-wrap justify-between space-x-2">
+				<p className={status === "open" ? "font-bold" : ""}>
 					{stops == 0
 						? "nonstop"
 						: stops === 1
@@ -252,25 +260,28 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 				<button
 					className="flex items-center space-x-1 hover:cursor-pointer"
 					onClick={() => {
-						setToggle((prevState) => !prevState);
+						setStatus((prevState) =>
+							prevState === "open" ? "closed" : "open"
+						);
 					}}
 				>
 					<p>see details</p>
 					<Dropdown
-						fill={toggle ? "" : "white"}
-						className={toggle ? "rotate-180" : ""}
+						fill={status === "open" ? "" : "white"}
+						className={status === "open" ? "rotate-180" : ""}
 					/>
 				</button>
 			</section>
 
-			{toggle && (
-				<section className="flex flex-col py-4 space-y-8  border-t-2 border-white mt-2">
+			{status === "open" && (
+				<section className="flex flex-col py-4 space-y-8 border-t-2 border-white mt-2">
 					{/* Flight segment */}
 					{segments}
 					{selectFlight && (
 						<SecondaryButton
 							onClick={() => {
 								selectFlight(flight);
+								setStatus((prevState) => !prevState);
 							}}
 						>
 							Save Flight
@@ -278,6 +289,6 @@ export default function FlightCard({ flight, selectFlight, dataType }) {
 					)}
 				</section>
 			)}
-		</main>
+		</motion.div>
 	);
 }

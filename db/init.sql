@@ -28,8 +28,8 @@ CREATE TABLE users (
     username VARCHAR(30) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL, --originall char(60) but hash password is 95+ characters long so use TEXT type
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TRIGGER trigger_set_updated_at_users
@@ -69,8 +69,8 @@ CREATE TABLE flights (
     flight_class flight_class_enum NOT NULL,
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
-    departure_datetime TIMESTAMPTZ NOT NULL,
-    arrival_datetime TIMESTAMPTZ NOT NULL,
+    departure_datetime TIMESTAMP NOT NULL,
+    arrival_datetime TIMESTAMP NOT NULL,
     duration_minutes SMALLINT NOT NULL,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
     currency CHAR(3) DEFAULT 'USD' NOT NULL,
@@ -79,8 +79,8 @@ CREATE TABLE flights (
     infants SMALLINT NOT NULL,
     num_segments SMALLINT NOT NULL CHECK (num_segments >= 1),
     api_source VARCHAR(100),
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    last_synced_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     
 
     -- Foreign Key Constraints
@@ -103,8 +103,8 @@ CREATE TABLE flight_segments(
     flight_number VARCHAR(10),
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
-    departure_datetime TIMESTAMPTZ NOT NULL,
-    arrival_datetime TIMESTAMPTZ NOT NULL,
+    departure_datetime TIMESTAMP NOT NULL,
+    arrival_datetime TIMESTAMP NOT NULL,
     duration_minutes SMALLINT NOT NULL,
     -- layover_minutes SMALLINT DEFAULT 0, Not available in Amadeus
 
@@ -129,7 +129,7 @@ CREATE TABLE saved_flights(
     sf_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
     flight_id UUID NOT NULL,
-    saved_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     -- Foreign Key Constraints
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
@@ -158,8 +158,8 @@ CREATE TABLE saved_filters(
     num_segments SMALLINT,
     include_redeye BOOLEAN DEFAULT true,
     show_extra_details BOOLEAN DEFAULT false,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     is_default BOOLEAN DEFAULT false,
 
     -- Foreign Key Constraint
@@ -195,7 +195,7 @@ CREATE TABLE search_history(
     infants SMALLINT NOT NULL,
     
     filters JSONB, -- optional: class, stops, airline preferences, etc.
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     -- Foreign Key Constraint
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE

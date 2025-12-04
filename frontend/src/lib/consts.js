@@ -577,6 +577,8 @@ import southwestAirlinesLogo from "@/assets/flight/airlines/southwest-airlines-l
 import spiritAirlines from "@/assets/flight/airlines/spirit-airlines.svg";
 import starluxAirlines from "@/assets/flight/airlines/starlux-airlines.svg";
 import starluxAirlinesLogo from "@/assets/flight/airlines/starlux-airlines-logo.svg";
+import sunCountryAirlines from "@/assets/flight/airlines/sun-country-airlines.svg";
+import sunCountryAirlinesLogo from "@/assets/flight/airlines/sun-country-airlines-logo.svg";
 import swiss from "@/assets/flight/airlines/swiss.svg";
 import swissLogo from "@/assets/flight/airlines/swiss-logo.svg";
 import tapAirPortugal from "@/assets/flight/airlines/tap-air-portugal.svg";
@@ -658,8 +660,9 @@ export const airlines = {
 	TR: { name: scoot, logo: scootLogo },
 	SQ: { name: singaporeAirlines, logo: singaporeAirlinesLogo },
 	WN: { name: southwestAirlines, logo: southwestAirlinesLogo },
-	NK: { name: spiritAirlines, logo: null },
+	NK: { name: spiritAirlines, logo: spiritAirlines },
 	JX: { name: starluxAirlines, logo: starluxAirlinesLogo },
+	SY: { name: sunCountryAirlines, logo: sunCountryAirlinesLogo },
 	LX: { name: swiss, logo: swissLogo },
 	TP: { name: tapAirPortugal, logo: tapAirPortugalLogo },
 	RO: { name: tarom, logo: taromLogo },

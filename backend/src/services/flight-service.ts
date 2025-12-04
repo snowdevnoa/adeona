@@ -206,8 +206,8 @@ export default class FlightService {
 				await this.cacheFlights(res.departingFlights, amadeus);
 
 				// if there is returning flights, cache them too
-				if (res.returnFlights) {
-					await this.cacheFlights(res.returnFlights, amadeus);
+				if (res.returningFlights) {
+					await this.cacheFlights(res.returningFlights, amadeus);
 				}
 				return res;
 			}
