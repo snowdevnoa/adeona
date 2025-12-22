@@ -21,6 +21,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ENTITIES --
+CREATE TYPE trip_type_enum AS ENUM ('one_way', 'round_trip');
 
 -- Create Users table
 CREATE TABLE users (
@@ -61,6 +62,7 @@ CREATE TABLE locations (
 -- Create Flights table
 CREATE TYPE flight_class_enum AS ENUM ('ECONOMY', 'PREMIUM_ECONOMY','BUSINESS', 'FIRST');
 
+-- A cache table of flights
 CREATE TABLE flights (
     flight_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     airline_id UUID NOT NULL,
@@ -124,24 +126,39 @@ CREATE TABLE flight_segments(
 
 );
 
--- Create Saved Flights table
-CREATE TABLE saved_flights(
-    sf_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+-- Create Trips table for snapshot of selected flights
+CREATE TABLE trips(
+    trip_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
-    flight_id UUID NOT NULL,
+    trip_name VARCHAR(100) NOT NULL,
     saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+-- Search Context (For the "Re-search" functionality)
+    origin_iata CHAR(3) NOT NULL,
+    destination_iata CHAR(3) NOT NULL,
+    departure_date DATE NOT NULL,
+    return_date DATE,
+    trip_type trip_type_enum NOT NULL, -- "one-way", "round-trip"
+    adults SMALLINT NOT NULL,
+    children SMALLINT NOT NULL,
+    infants SMALLINT NOT NULL,
+    currency_code CHAR(3) DEFAULT 'USD',
+    
+
+    -- The Direct Copy (For fast Dashboard rendering)
+    total_price DECIMAL(10,2),
+
+    -- The Snapshot
+    flight_details_snapshot JSONB,
 
     -- Foreign Key Constraints
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE,
 
     -- Unique Constraints
-    CONSTRAINT unique_user_flight UNIQUE (user_id, flight_id)
+    CONSTRAINT unique_user_trip UNIQUE (user_id, trip_name)
 );
 
 -- Create Saved Filters table
-CREATE TYPE trip_type_enum AS ENUM ('one_way', 'round_trip');
-
 CREATE TABLE saved_filters(
     filter_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
@@ -185,11 +202,11 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE search_history(
     search_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
-    origin VARCHAR(3) NOT NULL,
-    destination VARCHAR(3) NOT NULL,
+    origin CHAR(3) NOT NULL,
+    destination CHAR(3) NOT NULL,
     departure_date DATE NOT NULL,
     return_date DATE,
-    trip_type TEXT NOT NULL, -- "one-way", "round-trip"
+    trip_type trip_type_enum NOT NULL, -- "one-way", "round-trip"
     adults SMALLINT NOT NULL,
     children SMALLINT NOT NULL,
     infants SMALLINT NOT NULL,

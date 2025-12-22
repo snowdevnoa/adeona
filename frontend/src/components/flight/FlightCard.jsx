@@ -43,6 +43,7 @@ export default function FlightCard({
 	dataType,
 	variants,
 }) {
+	const isAmadeus = dataType === "amadeus";
 	const [status, setStatus] = useState("open" | "closed");
 	const AirlineLogo = airlines[flight.main_airline]?.logo || Placeholder; //self note: if airline logo doesn't exist, image placeholder
 	const departureDateTime = new Date(flight.departure_datetime);
@@ -70,41 +71,43 @@ export default function FlightCard({
 	const segments = flight.segments.map((segment, index, segments) => {
 		// console.log(segment);
 		const SegmentAirline =
-			(dataType == "amadeus"
+			(isAmadeus
 				? airlines[segment.airlineIATA]?.logo
 				: airlines[segment.airline]?.logo) || Placeholder;
-		const segmentDepartureDateTime =
-			dataType == "amadeus"
-				? new Date(segment.departureDateTime)
-				: new Date(segment.departure_datetime);
-		const segmentArrivalDateTime =
-			dataType == "amadeus"
-				? new Date(segment.arrivalDateTime)
-				: new Date(segment.arrival_datetime);
+		const segmentDepartureDateTime = isAmadeus
+			? new Date(segment.departureDateTime)
+			: new Date(segment.departure_datetime);
+		const segmentArrivalDateTime = isAmadeus
+			? new Date(segment.arrivalDateTime)
+			: new Date(segment.arrival_datetime);
 		// Cache data is directly from db so property read is different
-		const originCity =
-			dataType == "amadeus" ? segment.originCity : segment.origin_city;
-		const originAirport =
-			dataType == "amadeus" ? segment.originAirport : segment.origin_airport;
-		const destinationCity =
-			dataType == "amadeus"
-				? segment.destinationCity
-				: segment.destination_city;
-		const destinationAirport =
-			dataType == "amadeus"
-				? segment.destinationAirport
-				: segment.destination_airport;
+		const originCity = isAmadeus ? segment.originCity : segment.origin_city;
+		const originAirport = isAmadeus
+			? segment.originAirport
+			: segment.origin_airport;
+		const destinationCity = isAmadeus
+			? segment.destinationCity
+			: segment.destination_city;
+		const destinationAirport = isAmadeus
+			? segment.destinationAirport
+			: segment.destination_airport;
 
-		const durationMins =
-			dataType == "amadeus" ? segment.durationMins : segment.duration_minutes;
+		let prevArrival = null;
+		if (index > 0) {
+			const prev = segments[index - 1];
+			prevArrival = isAmadeus ? prev.arrivalDateTime : prev.arrival_datetime;
+		}
+
+		const durationMins = isAmadeus
+			? segment.durationMins
+			: segment.duration_minutes;
 
 		// layover inbetween segments - exclude last segment
 		let layoverMins = null;
 		if (index != segments.length - 1) {
-			const nextSegmentDepartureTime =
-				dataType == "amadeus"
-					? new Date(segments[index + 1].departureDateTime)
-					: new Date(segments[index + 1].departure_datetime);
+			const nextSegmentDepartureTime = isAmadeus
+				? new Date(segments[index + 1].departureDateTime)
+				: new Date(segments[index + 1].departure_datetime);
 
 			// calculate next departure time and current arrival time difference
 			const layoverDiff = Math.abs(
@@ -139,10 +142,7 @@ export default function FlightCard({
 							})}
 							{/* exclude first segment, check if depature date is next calendar date from previous arrival date*/}
 							{index != 0 ? (
-								checkNextCalendarDay(
-									segments[index - 1].arrivalDateTime,
-									segmentDepartureDateTime
-								) ? (
+								checkNextCalendarDay(prevArrival, segmentDepartureDateTime) ? (
 									<sup>+1</sup>
 								) : (
 									""
@@ -228,7 +228,6 @@ export default function FlightCard({
 						{/* Price & trip type */}
 						<div className="flex flex-col">
 							<p className="font-bold">${price}</p>
-							<p>{tripType.replace("_", " ")}</p>
 						</div>
 					</div>
 					{/* Flight duration */}
@@ -249,7 +248,7 @@ export default function FlightCard({
 						? "nonstop"
 						: stops === 1
 						? `${stops} stop in ${
-								dataType == "amadeus"
+								isAmadeus
 									? flight.segments[0].destinationCity.toLowerCase()
 									: flight.segments[0].destination_city.toLowerCase()
 						  }`
