@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
-	if (request.cookies.has("access_token")) {
+	if (request.cookies.has("user_access_token")) {
 		console.log("User is already logged in");
 		return NextResponse.redirect(new URL("/", request.url));
 	} else {
@@ -10,5 +10,5 @@ export function middleware(request) {
 }
 
 export const config = {
-	matcher: ["/login", "/register"],
+	matcher: ["/login", "/register", "/saved-flights"],
 };

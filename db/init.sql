@@ -21,6 +21,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ENTITIES --
+CREATE TYPE trip_type_enum AS ENUM ('one_way', 'round_trip');
 
 -- Create Users table
 CREATE TABLE users (
@@ -28,8 +29,8 @@ CREATE TABLE users (
     username VARCHAR(30) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL, --originall char(60) but hash password is 95+ characters long so use TEXT type
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TRIGGER trigger_set_updated_at_users
@@ -41,7 +42,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE airlines(
     airline_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     airline_name VARCHAR(100) UNIQUE NOT NULL,
-    iata_code CHAR(2) UNIQUE NOT NULL,
+    iata_code VARCHAR(3) UNIQUE NOT NULL,
     logo_url VARCHAR(2048) DEFAULT NULL,
     icon_url VARCHAR(2048) DEFAULT NULL
 );
@@ -50,7 +51,7 @@ CREATE TABLE airlines(
 CREATE TABLE locations (
     location_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     iata_code CHAR(3) UNIQUE NOT NULL,
-    airport_name VARCHAR(100) UNIQUE NOT NULL,
+    airport_name VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     country_code CHAR(2) NOT NULL,
     country VARCHAR(100) NOT NULL,
@@ -59,24 +60,29 @@ CREATE TABLE locations (
 );
 
 -- Create Flights table
-CREATE TYPE flight_class_enum AS ENUM ('economy', 'business', 'first_class');
+CREATE TYPE flight_class_enum AS ENUM ('ECONOMY', 'PREMIUM_ECONOMY','BUSINESS', 'FIRST');
 
+-- A cache table of flights
 CREATE TABLE flights (
     flight_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     airline_id UUID NOT NULL,
-    flight_number VARCHAR(10) NOT NULL,
+    -- flight_number VARCHAR(10) NOT NULL,
+    flight_number VARCHAR(10),
     flight_class flight_class_enum NOT NULL,
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
-    departure_datetime TIMESTAMPTZ NOT NULL,
-    arrival_datetime TIMESTAMPTZ NOT NULL,
+    departure_datetime TIMESTAMP NOT NULL,
+    arrival_datetime TIMESTAMP NOT NULL,
     duration_minutes SMALLINT NOT NULL,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
     currency CHAR(3) DEFAULT 'USD' NOT NULL,
+    adults SMALLINT NOT NULL,
+    children SMALLINT NOT NULL,
+    infants SMALLINT NOT NULL,
     num_segments SMALLINT NOT NULL CHECK (num_segments >= 1),
     api_source VARCHAR(100),
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    last_synced_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     
 
     -- Foreign Key Constraints
@@ -99,10 +105,10 @@ CREATE TABLE flight_segments(
     flight_number VARCHAR(10),
     origin_id UUID NOT NULL,
     destination_id UUID NOT NULL,
-    departure_datetime TIMESTAMPTZ NOT NULL,
-    arrival_datetime TIMESTAMPTZ NOT NULL,
+    departure_datetime TIMESTAMP NOT NULL,
+    arrival_datetime TIMESTAMP NOT NULL,
     duration_minutes SMALLINT NOT NULL,
-    layover_minutes SMALLINT DEFAULT 0,
+    -- layover_minutes SMALLINT DEFAULT 0, Not available in Amadeus
 
     -- Foreign Key Constraints
     CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE,
@@ -115,29 +121,44 @@ CREATE TABLE flight_segments(
 
     -- Check Constraints
     CONSTRAINT chk_duration_positive CHECK (duration_minutes >= 0),
-    CONSTRAINT chk_arrival_after_departure CHECK (arrival_datetime > departure_datetime),
-    CONSTRAINT chk_layover_nonnegative CHECK (layover_minutes IS NULL OR layover_minutes >= 0)
+    CONSTRAINT chk_return_after_departure CHECK (arrival_datetime > departure_datetime)
+    -- CONSTRAINT chk_layover_nonnegative CHECK (layover_minutes IS NULL OR layover_minutes >= 0)
 
 );
 
--- Create Saved Flights table
-CREATE TABLE saved_flights(
-    sf_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+-- Create Trips table for snapshot of selected flights
+CREATE TABLE trips(
+    trip_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
-    flight_id UUID NOT NULL,
-    saved_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    trip_name VARCHAR(100) NOT NULL,
+    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+-- Search Context (For the "Re-search" functionality)
+    origin_iata CHAR(3) NOT NULL,
+    destination_iata CHAR(3) NOT NULL,
+    departure_date DATE NOT NULL,
+    return_date DATE,
+    trip_type trip_type_enum NOT NULL, -- "one-way", "round-trip"
+    adults SMALLINT NOT NULL,
+    children SMALLINT NOT NULL,
+    infants SMALLINT NOT NULL,
+    currency_code CHAR(3) DEFAULT 'USD',
+    
+
+    -- The Direct Copy (For fast Dashboard rendering)
+    total_price DECIMAL(10,2),
+
+    -- The Snapshot
+    flight_details_snapshot JSONB,
 
     -- Foreign Key Constraints
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE,
 
     -- Unique Constraints
-    CONSTRAINT unique_user_flight UNIQUE (user_id, flight_id)
+    CONSTRAINT unique_user_trip UNIQUE (user_id, trip_name)
 );
 
 -- Create Saved Filters table
-CREATE TYPE trip_type_enum AS ENUM ('one_way', 'round_trip');
-
 CREATE TABLE saved_filters(
     filter_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID,
@@ -154,8 +175,8 @@ CREATE TABLE saved_filters(
     num_segments SMALLINT,
     include_redeye BOOLEAN DEFAULT true,
     show_extra_details BOOLEAN DEFAULT false,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     is_default BOOLEAN DEFAULT false,
 
     -- Foreign Key Constraint
@@ -181,8 +202,17 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE search_history(
     search_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
-    search_params JSONB NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    origin CHAR(3) NOT NULL,
+    destination CHAR(3) NOT NULL,
+    departure_date DATE NOT NULL,
+    return_date DATE,
+    trip_type trip_type_enum NOT NULL, -- "one-way", "round-trip"
+    adults SMALLINT NOT NULL,
+    children SMALLINT NOT NULL,
+    infants SMALLINT NOT NULL,
+    
+    filters JSONB, -- optional: class, stops, airline preferences, etc.
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     -- Foreign Key Constraint
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -204,6 +234,8 @@ CREATE TABLE search_history(
 -- Saved Filters table - users common searches: name
     CREATE INDEX idx_saved_filters_name ON saved_filters(name);
 
+-- Search History table - for measuring search frequency 
+    CREATE INDEX idx_search_freq_basic ON search_history (origin, destination, departure_date, return_date, trip_type, created_at);
 
 -- Notes for future scalability
 -- Partitioning large tables
