@@ -2,6 +2,7 @@ import { useState } from "react";
 import Back from "@/assets/global/Back.svg";
 import FlightCard from "./FlightCard";
 import { motion, stagger } from "motion/react";
+import TripForm from "../trip/TripForm";
 
 /*
 incoming prop results 
@@ -204,6 +205,14 @@ export default function FlightList({ results, mutation }) {
 					</h1>
 				</div>
 			</section>
+
+			<TripForm
+				searchData={mutation.variables}
+				flights={{
+					departingFlight: selectedDepartingFlight,
+					returnFlight: selectedReturningFlight,
+				}}
+			/>
 		</main>
 	);
 }

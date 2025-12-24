@@ -31,6 +31,7 @@ export default function Input({
 				max={max}
 				defaultValue={value}
 				ref={ref}
+				onChange={onChange}
 			/>
 		</div>
 	);
