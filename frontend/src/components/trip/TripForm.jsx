@@ -2,22 +2,23 @@ import Input from "../global/Input";
 import { use, useState } from "react";
 import MainButton from "../global/MainButton";
 
-export default function TripForm({ searchData, flights }) {
+export default function TripForm({ searchData, flights, dataType }) {
 	const [tripName, setTripName] = useState(null);
 	const [message, setMessage] = useState(null);
 
 	const { departingFlight, returnFlight } = flights;
 
-	function createTrip(e) {
+	async function createTrip(e) {
 		e.preventDefault();
 
 		try {
-			if (!tripName || tripName === '') {
+			if (!tripName || tripName.trim() === "") {
 				throw new Error("Trip name cannot be empty.");
 			}
 
 			const tripPayload = {
-				tripName: tripName,
+				tripName: tripName.trim(),
+				dataType: dataType,
 				searchData: {
 					...searchData,
 					origin: departingFlight.origin,
@@ -26,7 +27,20 @@ export default function TripForm({ searchData, flights }) {
 				flights: { departingFlight, returnFlight },
 			};
 
-			console.log(tripPayload);
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_DEV_API_URL}/trips/save`,
+				{
+					method: "POST",
+					credentials: "include",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(tripPayload),
+				}
+			);
+
+			if (!res.ok) {
+				const errorData = await res.json();
+				throw new Error(errorData.error);
+			}
 		} catch (err) {
 			console.log(err.message);
 			setMessage(err.message);

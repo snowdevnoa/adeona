@@ -212,6 +212,7 @@ export default function FlightList({ results, mutation }) {
 					departingFlight: selectedDepartingFlight,
 					returnFlight: selectedReturningFlight,
 				}}
+				dataType={mutation.data.type}
 			/>
 		</main>
 	);

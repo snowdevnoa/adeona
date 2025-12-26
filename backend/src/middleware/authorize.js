@@ -17,7 +17,8 @@ export default function authorizeUser(req, res, next) {
 	// Verify token
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		req.user = decoded;
+		//Expose only safe authorize user info like id and role
+		req.user = { id: decoded.id, role: decoded.role };
 		// console.log("You are authorized to continue, decoded token: " + decoded)
 		next();
 	} catch (err) {

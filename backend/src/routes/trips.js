@@ -1,6 +1,10 @@
-/* Incoming trip data
+import express from "express";
+import authorizeUser from "../middleware/authorize.js";
+import { saveTrip } from "../controllers/trip-controller.js";
 
-flights: {departingFlight: {…}, returnFlight: {…}}
-searchData: {origin: 'DFW', destination: 'SEA', departureDate: '2025-12-25', returnDate: '2025-12-31', tripType: 'round_trip', …}
-tripName: "This is my trip"
-*/
+const router = express.Router();
+
+//define the save trip route - POST
+router.post("/save", authorizeUser, saveTrip);
+
+export default router;

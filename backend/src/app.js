@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRouter from "./routes/users.js";
 import flightRouter from "./routes/flights.js";
+import tripRouter from "./routes/trips.js";
 import "dotenv/config";
 
 const app = express();
@@ -26,6 +27,8 @@ app.get("/", async (req, res) => {
 app.use("/users", userRouter);
 
 app.use("/flights", flightRouter);
+
+app.use("/trips", tripRouter);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
