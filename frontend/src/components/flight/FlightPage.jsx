@@ -47,6 +47,11 @@ export default function FlightPage() {
 		return await response.json();
 	}
 
+	//Reset all internal state and tanstack once trip has been selected
+	function handleFullReset() {
+		mutation.reset();
+	}
+
 	return (
 		/*
   The flight search form section stays mounted even after a successful search.
@@ -86,6 +91,7 @@ export default function FlightPage() {
 						<FlightList
 							results={mutation.data}
 							mutation={mutation}
+							onComplete={handleFullReset}
 						/>
 					)}
 				</PageWrapper>

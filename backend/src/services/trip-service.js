@@ -1,3 +1,27 @@
+import z from "zod/v4";
+import TripModel from "../models/trip-model.js";
+
 export default class TripService {
 	// Save trip in database
+	async saveTrip(user, tripData) {
+		// Validate trip data
+		const Trip = z.object({
+			tripName: z.string().regex(/^[a-zA-Z0-9_ ]+$/, "Trip Name is not valid"),
+		});
+		try {
+			Trip.parse(tripData);
+		} catch (err) {
+			if (err instanceof z.ZodError) throw new Error(err.issues[0].message);
+		}
+
+		// Save trip to database
+		try {
+			const result = await TripModel.saveTrip(user, tripData);
+			return tripData.tripName;
+		} catch (err) {
+			throw new Error(
+				"There is already a trip with this name, please type another."
+			);
+		}
+	}
 }

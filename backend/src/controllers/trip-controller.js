@@ -7,11 +7,10 @@ export const saveTrip = async (req, res) => {
 		//receive incoming form data from client
 		const tripData = req.body;
 		const user = req.user;
-		console.log(tripData);
-		console.log(user);
-
-		res.status(200);
+		const result = await trip.saveTrip(user, tripData);
+		console.log(`Your ${result} was saved!`);
+		res.status(200).json({ success: `${result} was saved!` });
 	} catch (err) {
-		console.log(err.message);
+		res.status(400).json({ error: err.message });
 	}
 };

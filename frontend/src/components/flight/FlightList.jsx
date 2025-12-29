@@ -12,7 +12,7 @@ mutation.data = {
   returningFlights: [...]
 }
 */
-export default function FlightList({ results, mutation }) {
+export default function FlightList({ results, mutation, onComplete }) {
 	const [departingFlights, setDepartingFlights] = useState(
 		results.departingFlights
 	);
@@ -213,6 +213,15 @@ export default function FlightList({ results, mutation }) {
 					returnFlight: selectedReturningFlight,
 				}}
 				dataType={mutation.data.type}
+				totalPrice={
+					selectedReturningFlight
+						? (
+								new Number(selectedDepartingFlight.price) +
+								new Number(selectedReturningFlight.price)
+						  ).toFixed(2)
+						: selectedDepartingFlight.price
+				}
+				onComplete={onComplete}
 			/>
 		</main>
 	);

@@ -1,10 +1,18 @@
 import Input from "../global/Input";
 import { use, useState } from "react";
 import MainButton from "../global/MainButton";
+import TripSuccess from "./TripSuccess";
 
-export default function TripForm({ searchData, flights, dataType }) {
+export default function TripForm({
+	searchData,
+	flights,
+	dataType,
+	totalPrice,
+	onComplete,
+}) {
 	const [tripName, setTripName] = useState(null);
 	const [message, setMessage] = useState(null);
+	const [status, setStatus] = useState("open");
 
 	const { departingFlight, returnFlight } = flights;
 
@@ -18,13 +26,13 @@ export default function TripForm({ searchData, flights, dataType }) {
 
 			const tripPayload = {
 				tripName: tripName.trim(),
-				dataType: dataType,
 				searchData: {
 					...searchData,
 					origin: departingFlight.origin,
 					destination: departingFlight.destination,
 				},
-				flights: { departingFlight, returnFlight },
+				flights: { dataType, departingFlight, returnFlight },
+				totalPrice,
 			};
 
 			const res = await fetch(
@@ -37,17 +45,26 @@ export default function TripForm({ searchData, flights, dataType }) {
 				}
 			);
 
+			console.log(res);
 			if (!res.ok) {
 				const errorData = await res.json();
 				throw new Error(errorData.error);
 			}
+			const trip = await res.json();
+			setMessage(trip.success);
+			setStatus("success");
 		} catch (err) {
 			console.log(err.message);
 			setMessage(err.message);
 		}
 	}
 
-	return (
+	return status === "success" ? (
+		<TripSuccess
+			message={message}
+			onComplete={onComplete}
+		/>
+	) : (
 		<form onSubmit={createTrip}>
 			<Input
 				type="text"
