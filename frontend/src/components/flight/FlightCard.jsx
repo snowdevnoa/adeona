@@ -4,6 +4,10 @@ import Dropdown from "@/assets/global/Dropdown.svg";
 import SecondaryButton from "../global/SecondaryButton";
 import Placeholder from "@/assets/global/Placeholder.svg";
 import { motion } from "framer-motion";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { checkNextCalendarDay } from "utils/date";
+dayjs.extend(utc);
 
 /* incoming flight info
 
@@ -46,26 +50,14 @@ export default function FlightCard({
 	const isAmadeus = dataType === "amadeus";
 	const [status, setStatus] = useState("open" | "closed");
 	const AirlineLogo = airlines[flight.main_airline]?.logo || Placeholder; //self note: if airline logo doesn't exist, image placeholder
-	const departureDateTime = new Date(flight.departure_datetime);
-	const arrivalDateTime = new Date(flight.arrival_datetime);
+	const departureDateTime = dayjs.utc(flight.departure_datetime);
+	const arrivalDateTime = dayjs.utc(flight.arrival_datetime);
 	const { origin, destination, price } = flight;
 	const tripType = flight.trip_type;
 	const totalDuration = flight.duration_minutes;
 	const flightClass = flight.flight_class;
 	const stops = flight.segments.length - 1;
 	// Check if date arrive is one day later than departing date
-	function checkNextCalendarDay(departingDate, arrivalDate) {
-		const dep = new Date(departingDate);
-		const arr = new Date(arrivalDate);
-		if (isNaN(dep) || isNaN(arr)) return false;
-
-		// Compare calendar days (local)
-		const depDate = new Date(dep.getFullYear(), dep.getMonth(), dep.getDate());
-		const arrDate = new Date(arr.getFullYear(), arr.getMonth(), arr.getDate());
-
-		const diffDays = (arrDate - depDate) / (1000 * 60 * 60 * 24);
-		return diffDays >= 1;
-	}
 
 	// SEGMENT Component
 	const segments = flight.segments.map((segment, index, segments) => {
@@ -75,11 +67,11 @@ export default function FlightCard({
 				? airlines[segment.airlineIATA]?.logo
 				: airlines[segment.airline]?.logo) || Placeholder;
 		const segmentDepartureDateTime = isAmadeus
-			? new Date(segment.departureDateTime)
-			: new Date(segment.departure_datetime);
+			? dayjs.utc(segment.departureDateTime)
+			: dayjs.utc(segment.departure_datetime);
 		const segmentArrivalDateTime = isAmadeus
-			? new Date(segment.arrivalDateTime)
-			: new Date(segment.arrival_datetime);
+			? dayjs.utc(segment.arrivalDateTime)
+			: dayjs.utc(segment.arrival_datetime);
 		// Cache data is directly from db so property read is different
 		const originCity = isAmadeus ? segment.originCity : segment.origin_city;
 		const originAirport = isAmadeus
@@ -105,17 +97,17 @@ export default function FlightCard({
 		// layover inbetween segments - exclude last segment
 		let layoverMins = null;
 		if (index != segments.length - 1) {
-			const nextSegmentDepartureTime = isAmadeus
-				? new Date(segments[index + 1].departureDateTime)
-				: new Date(segments[index + 1].departure_datetime);
+			const nextStr = isAmadeus
+				? dayjs.utc(segments[index + 1].departureDateTime)
+				: dayjs.utc(segments[index + 1].departure_datetime);
 
-			// calculate next departure time and current arrival time difference
-			const layoverDiff = Math.abs(
-				segmentArrivalDateTime - nextSegmentDepartureTime
+			const nextSegmentDepartureTime = dayjs.utc(nextStr);
+
+			// Use .diff instead of Math.abs/subtraction
+			layoverMins = nextSegmentDepartureTime.diff(
+				segmentArrivalDateTime,
+				"minute"
 			);
-			// Calculate total minutes from difference in miliseconds
-			// console.log(Math.floor(layoverDiff / 1000 / 60));
-			layoverMins = Math.floor(layoverDiff / 1000 / 60);
 		}
 
 		return (
@@ -136,10 +128,7 @@ export default function FlightCard({
 					<SegmentAirline className="mr-4" />
 					<div className="flex flex-col grow">
 						<p className="font-bold">
-							{segmentDepartureDateTime.toLocaleTimeString("en-US", {
-								hour: "2-digit",
-								minute: "2-digit",
-							})}
+							{segmentDepartureDateTime.format("h:mm A")}
 							{/* exclude first segment, check if depature date is next calendar date from previous arrival date*/}
 							{index != 0 ? (
 								checkNextCalendarDay(prevArrival, segmentDepartureDateTime) ? (
@@ -155,10 +144,7 @@ export default function FlightCard({
 					</div>
 					<div className="flex flex-col grow">
 						<p className="font-bold">
-							{segmentArrivalDateTime.toLocaleTimeString("en-US", {
-								hour: "2-digit",
-								minute: "2-digit",
-							})}
+							{segmentArrivalDateTime.format("h:mm A")}
 							{/* check arrival date is next calendar day from departure date*/}
 							{checkNextCalendarDay(
 								segmentDepartureDateTime,
@@ -202,21 +188,13 @@ export default function FlightCard({
 					<div className="flex justify-between">
 						{/* Departing date */}
 						<div className="flex flex-col">
-							<p className="font-bold">
-								{departureDateTime.toLocaleTimeString("en-US", {
-									hour: "2-digit",
-									minute: "2-digit",
-								})}
-							</p>
+							<p className="font-bold">{departureDateTime.format("h:mm A")}</p>
 							<p>{origin}</p>
 						</div>
 						{/* Arrival date */}
 						<div className="flex flex-col">
 							<p className="font-bold">
-								{arrivalDateTime.toLocaleTimeString("en-US", {
-									hour: "2-digit",
-									minute: "2-digit",
-								})}
+								{arrivalDateTime.format("h:mm A")}
 								{checkNextCalendarDay(departureDateTime, arrivalDateTime) ? (
 									<sup>+1</sup>
 								) : (

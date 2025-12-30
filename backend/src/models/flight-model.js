@@ -73,8 +73,8 @@ export default class FlightModel {
             flight_class flight_class_enum NOT NULL,
             origin_id UUID NOT NULL,
             destination_id UUID NOT NULL,
-            departure_datetime TIMESTAMPTZ NOT NULL,
-            arrival_datetime TIMESTAMPTZ NOT NULL,
+            departure_datetime TIMESTAMP NOT NULL,
+            arrival_datetime TIMESTAMP NOT NULL,
             duration_minutes SMALLINT NOT NULL,
             price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
             currency CHAR(3) DEFAULT 'USD' NOT NULL,
@@ -181,7 +181,8 @@ export default class FlightModel {
 			AND flights.adults = $5
 			AND flights.children = $6
 			AND flights.infants = $7
-    		AND last_synced_at >= (NOW() - INTERVAL '2 minutes')`,
+    		AND last_synced_at >= (NOW() - INTERVAL '10 minutes')
+			ORDER BY created_at ASC`,
 			[
 				origin,
 				destination,
