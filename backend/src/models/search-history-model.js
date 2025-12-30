@@ -7,14 +7,15 @@ export default class SearchHistoryModel {
 			destination,
 			departureDate,
 			tripType,
+			flightClass,
 			returnDate,
 			adults,
 			children,
 			infants,
 		} = searchParams;
 		const result = await pool.query(
-			`INSERT INTO search_history(user_id, origin, destination, departure_date, return_date, trip_type, adults, children, infants )
-			VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+			`INSERT INTO search_history(user_id, origin, destination, departure_date, return_date, trip_type, flight_class, adults, children, infants )
+			VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
 			[
 				user.id,
 				origin,
@@ -22,6 +23,7 @@ export default class SearchHistoryModel {
 				departureDate,
 				returnDate,
 				tripType,
+				flightClass,
 				adults,
 				children,
 				infants,
@@ -38,6 +40,7 @@ export default class SearchHistoryModel {
 			destination,
 			departureDate,
 			tripType,
+			flightClass,
 			returnDate,
 			adults,
 			children,
@@ -52,7 +55,7 @@ export default class SearchHistoryModel {
 		console.log(
 			`Checking search frequency for: 
 			${origin} to ${destination} on ${departureDate} 
-			${tripType} ${returnDate} 
+			${tripType} ${returnDate} ${flightClass}
 			for ${adults} adults, ${children} children, ${infants} infants`
 		);
 
@@ -70,15 +73,17 @@ export default class SearchHistoryModel {
 				(search_history.trip_type = 'one_way' AND search_history.return_date IS NULL) OR
 				(search_history.trip_type = 'round_trip' AND search_history.return_date = $4)
 			) AND
-			search_history.adults = $5 AND
-			search_history.children = $6 AND
-			search_history.infants = $7 AND
+			search_history.flight_class = $5 AND
+			search_history.adults = $6 AND
+			search_history.children = $7 AND
+			search_history.infants = $8 AND
 			search_history.created_at >= (NOW() - INTERVAL '10 minutes')`,
 			[
 				origin,
 				destination,
 				departureDate,
 				returnDate,
+				flightClass,
 				adults,
 				children,
 				infants,
@@ -100,15 +105,17 @@ export default class SearchHistoryModel {
 				(search_history.trip_type = 'one_way' AND search_history.return_date IS NULL) OR
 				(search_history.trip_type = 'round_trip' AND search_history.return_date = $4)
 			) AND
-			search_history.adults = $5 AND
-			search_history.children = $6 AND
-			search_history.infants = $7 AND
+			search_history.flight_class = $5 AND
+			search_history.adults = $6 AND
+			search_history.children = $7 AND
+			search_history.infants = $8 AND
 			search_history.created_at >= (NOW() - INTERVAL '6 hours')`,
 			[
 				origin,
 				destination,
 				departureDate,
 				returnDate,
+				flightClass,
 				adults,
 				children,
 				infants,
