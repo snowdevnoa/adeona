@@ -208,6 +208,7 @@ CREATE TABLE search_history(
     departure_date DATE NOT NULL,
     return_date DATE,
     trip_type trip_type_enum NOT NULL, -- "one-way", "round-trip"
+    flight_class flight_class_enum NOT NULL,
     adults SMALLINT NOT NULL,
     children SMALLINT NOT NULL,
     infants SMALLINT NOT NULL,

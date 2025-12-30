@@ -81,6 +81,7 @@ export default class FlightSegmentModel {
 			LEFT JOIN locations AS destination_loc ON flight_segments.destination_id = destination_loc.location_id
 			LEFT JOIN airlines ON flight_segments.airline_id = airlines.airline_id 
 			WHERE flight_segments.flight_id = $1
+			ORDER BY flight_segments.segment_number ASC
 			`,
 			[flightId]
 		);
