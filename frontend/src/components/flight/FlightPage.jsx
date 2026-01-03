@@ -1,6 +1,6 @@
 "use client";
 import FlightForm from "./FlightForm";
-import Header from "./Header";
+import Header from "../global/Header";
 import { useMutation } from "@tanstack/react-query"; // use mutation for user driven events
 import FlightList from "./FlightList";
 import NoFlights from "./NoFlights";
@@ -74,7 +74,7 @@ export default function FlightPage() {
 					mutation.isSuccess || mutation.isPending ? "hidden" : ""
 				}`}
 			>
-				<Header />
+				<Header title="Flights" />
 				<FlightForm onSubmit={searchFlights} />
 				{mutation.isError && (
 					<p className="text-[var(--error-500)]">{mutation.error.message}</p>
@@ -84,7 +84,7 @@ export default function FlightPage() {
 			{mutation.isPending && <LoadingFlights />}
 			{mutation.isSuccess && (
 				<PageWrapper className="justify-center items-center">
-					<Header />
+					<Header title="Flights" />
 					{mutation.data.departingFlights.length === 0 ? (
 						<NoFlights mutation={mutation} />
 					) : (

@@ -28,9 +28,9 @@ export default function SecondaryNav() {
 				<Airplane />
 			</Link>
 			<Link
-				href="/"
+				href="/trips"
 				className={`link ${
-					pathname === "/saved" ? "border-b-[3px]" : ""
+					pathname === "/trips" ? "border-b-[3px]" : ""
 				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Trips</p>
