@@ -14,3 +14,13 @@ export const saveTrip = async (req, res) => {
 		res.status(400).json({ error: err.message });
 	}
 };
+
+export const getTrips = async (req, res) => {
+	try {
+		const user = req.user;
+		const result = await trip.getTrips(user);
+		res.status(200).json({ success: "Here are your trips:", trips: result });
+	} catch (err) {
+		res.status(400).json({ error: err.message });
+	}
+};

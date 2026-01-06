@@ -9,7 +9,7 @@ import PageWrapper from "../global/PageWrapper";
 
 export default function FlightPage() {
 	const mutation = useMutation({
-		mutationFn: (searchData) => getFlights(searchData),
+		mutationFn: (searchData) => fetchFlights(searchData),
 	});
 
 	function searchFlights(e) {
@@ -25,7 +25,7 @@ export default function FlightPage() {
 		mutation.mutate(newSearch);
 	}
 
-	async function getFlights(searchData) {
+	async function fetchFlights(searchData) {
 		// console.log(searchData);
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_DEV_API_URL}/flights/search`,
@@ -41,7 +41,7 @@ export default function FlightPage() {
 		if (!response.ok) {
 			const errorData = await response.json();
 			// console.log(errorData);
-			throw new Error(errorData.error || "Unknown error");
+			throw new Error(errorData.error || "Server error");
 		}
 
 		return await response.json();

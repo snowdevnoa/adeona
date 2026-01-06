@@ -66,4 +66,15 @@ export default class TripModel {
 		);
 		return result;
 	}
+
+	static async getTrips(user) {
+		const { id } = user;
+		const result = await pool.query(
+			`SELECT * FROM trips
+		WHERE user_id = $1
+		ORDER BY saved_at`,
+			[id]
+		);
+		return result.rows;
+	}
 }

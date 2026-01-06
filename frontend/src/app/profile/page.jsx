@@ -8,7 +8,7 @@ export default function Profile() {
 	const [userProfile, setUserProfile] = useState(null);
 	const router = useRouter();
 
-	async function getProfile() {
+	async function fetchProfile() {
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_DEV_API_URL}/users/profile`,
 			{
@@ -47,7 +47,7 @@ export default function Profile() {
 
 	useEffect(() => {
 		(async () => {
-			const profile = await getProfile();
+			const profile = await fetchProfile();
 			setUserProfile(profile);
 		})();
 	}, []);

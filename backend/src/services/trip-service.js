@@ -24,4 +24,14 @@ export default class TripService {
 			);
 		}
 	}
+
+	// Get user trips in database
+	async getTrips(user) {
+		try {
+			const result = await TripModel.getTrips(user);
+			return result;
+		} catch (err) {
+			console.log(`Could not get trips from database`);
+		}
+	}
 }
