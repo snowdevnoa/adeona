@@ -5,10 +5,12 @@ import SecondaryNav from "@/components/global/SecondaryNav";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import TripCard from "@/components/trip/TripCard";
+import PageWrapper from "@/components/global/PageWrapper";
+
 
 export default function Trips() {
 	const router = useRouter();
-	const [trips, setTrips] = useState(null);
 	const { status, data, error } = useQuery({
 		queryKey: ["trips"],
 		queryFn: fetchTrips,
@@ -27,9 +29,20 @@ export default function Trips() {
 			throw new Error(errorData.error || "Server error");
 		}
 
-		console.log(error);
 		const userTrips = await response.json();
 		return userTrips;
+	}
+
+	let myTrips = null;
+	if (data) {
+		myTrips = data.trips.map((trip) => {
+			return (
+				<TripCard
+					trip={trip}
+					key={trip.trip_id}
+				/>
+			);
+		});
 	}
 
 	if (status === "pending")
@@ -54,10 +67,14 @@ export default function Trips() {
 			<SecondaryNav />
 		</>
 	) : (
-		<>
+		<PageWrapper className="space-y-[2rem]">
 			<Header title="Trips" />
-			<p>test</p>
+			<h1 className="text-4xl p-4 font-bold">{myTrips.length} trips</h1>
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8 self-center">
+				{myTrips}
+			</div>
+
 			<SecondaryNav />
-		</>
+		</PageWrapper>
 	);
 }

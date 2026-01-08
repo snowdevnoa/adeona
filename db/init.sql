@@ -149,6 +149,9 @@ CREATE TABLE trips(
     -- The Direct Copy (For fast Dashboard rendering)
     total_price DECIMAL(10,2),
 
+    -- The Fun Info
+    description VARCHAR(250) DEFAULT NULL,
+
     -- The Snapshot
     flight_details_snapshot JSONB,
 

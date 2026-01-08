@@ -33,8 +33,6 @@ export default function LoginForm() {
 		e.preventDefault();
 
 		const formData = new FormData(e.target);
-		console.log("form completed");
-		console.log(formData);
 
 		const rawFormData = {
 			username: formData.get("username"),
