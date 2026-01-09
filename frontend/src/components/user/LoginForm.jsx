@@ -90,7 +90,7 @@ export default function LoginForm() {
 	) : (
 		<Form
 			onSubmit={login}
-			className="flex flex-col w-[311px] mt-[1.5rem] md:w-[624px] lg:w-[630px] lg:mt-[0]"
+			className="flex flex-col w-[311px] mt-[1.5rem] md:w-[624px] lg:w-[630px] lg:mt-[0] space-y-4"
 		>
 			<Input
 				label="Username"
@@ -112,7 +112,11 @@ export default function LoginForm() {
 			>
 				log in
 			</MainButton>
-			<p className="text-[var(--error-400)] mt-[1rem] md:text-xl">{message}</p>
+			{message && (
+				<p className="text-[var(--error-400)] mt-[1rem] md:text-xl">
+					{message}
+				</p>
+			)}
 			<div className="flex items-center justify-between mt-[2rem] md:justify-evenly">
 				<SecondaryButton
 					type="button"

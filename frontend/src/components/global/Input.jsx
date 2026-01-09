@@ -13,13 +13,15 @@ export default function Input({
 	onChange,
 }) {
 	return (
-		<div className="flex flex-col mb-[1.5rem]">
-			<label
-				htmlFor={id}
-				className="text-lg mb-[0.5rem] font-bold"
-			>
-				{label}
-			</label>
+		<div className="flex flex-col">
+			{label && (
+				<label
+					htmlFor={id}
+					className="text-lg mb-[0.5rem] font-bold"
+				>
+					{label}
+				</label>
+			)}
 			<input
 				type={type}
 				name={name}
