@@ -34,4 +34,17 @@ export default class TripService {
 			console.log(`Could not get trips from database`);
 		}
 	}
+
+	// Update user trip in database
+
+	async updateTrip(user, trip) {
+		try {
+			const result = await TripModel.updateTrip(user, trip);
+			return result;
+		} catch (err) {
+			throw new Error(
+				"There is another trip with the same name, please enter a new name"
+			);
+		}
+	}
 }

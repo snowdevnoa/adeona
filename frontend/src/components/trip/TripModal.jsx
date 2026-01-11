@@ -4,9 +4,13 @@ import AddImage from "@/assets/trip/AddImage.svg";
 import X from "@/assets/global/X.svg";
 import Trash from "@/assets/trip/Trash.svg";
 import Update from "@/assets/trip/Update.svg";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function TripModal({ setModal, trip }) {
+	const queryClient = useQueryClient();
+
 	const [cover, setCover] = useState("default" || "hover");
+	const [error, setError] = useState(null);
 
 	// use state and handleChange for controlled form
 	const [tripData, setTripData] = useState(trip);
@@ -27,14 +31,39 @@ export default function TripModal({ setModal, trip }) {
 		});
 	}
 
+	async function updateTrip(e) {
+		e.preventDefault();
+
+		try {
+			const result = await fetch(
+				`${process.env.NEXT_PUBLIC_DEV_API_URL}/trips/update`,
+				{
+					method: "PUT",
+					credentials: "include",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(tripData),
+				}
+			);
+
+			if (!result.ok) {
+				const errorData = await result.json();
+				throw new Error(errorData.error);
+			}
+			setError(null);
+			queryClient.invalidateQueries({ queryKey: ["trips"] });
+			setModal("close");
+		} catch (err) {
+			console.log(err.message);
+			setError(err.message);
+		}
+	}
+
 	return (
 		<main className="fixed w-screen h-screen bg-[rgb(0,0,0,0.5)] z-2 top-0 right-0">
 			<div className="w-full h-full flex flex-col justify-center items-center">
 				<form
 					className="w-[80%] lg:w-[475px] text-[var(--adeona-blue-900)] bg-[var(--adeona-blue-300)] p-4 rounded-lg flex flex-col space-y-2 relative"
-					onSubmit={(e) => {
-						e.preventDefault();
-					}}
+					onSubmit={updateTrip}
 				>
 					<X
 						className="absolute right-5 stroke-black hover:cursor-pointer hover:stroke-[var(--error-400)]"
@@ -70,7 +99,7 @@ export default function TripModal({ setModal, trip }) {
 					</div>
 					<h2>Trip Name</h2>
 					<Input
-						name="tripName"
+						name="trip_name"
 						value={tripData.trip_name}
 						onChange={handleChange}
 					/>
@@ -95,6 +124,11 @@ export default function TripModal({ setModal, trip }) {
 							<Update className="mr-1" /> Update
 						</button>
 					</div>
+					{error && (
+						<p className="text-[var(--error-400)] text-center md:text-lg">
+							{error}
+						</p>
+					)}
 				</form>
 			</div>
 		</main>

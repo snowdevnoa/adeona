@@ -77,4 +77,16 @@ export default class TripModel {
 		);
 		return result.rows;
 	}
+
+	static async updateTrip(user, trip) {
+		const { id } = user;
+		const { trip_id, trip_name, description } = trip;
+		const result = await pool.query(
+			`UPDATE trips
+			SET trip_name = $3, description = $4
+			WHERE user_id = $1 AND trip_id = $2;`,
+			[id, trip_id, trip_name, description]
+		);
+		if (result.rowCount === 1) return trip_name;
+	}
 }
