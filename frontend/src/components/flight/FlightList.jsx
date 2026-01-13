@@ -50,7 +50,11 @@ export default function FlightList({ results, mutation, onComplete }) {
 							mutation.reset();
 						}}
 					>
-						<Back stroke="var(--cosmic-latte-300)" />
+						<Back
+							width={14}
+							height={14}
+							stroke="var(--cosmic-latte-300)"
+						/>
 						<p className="text-[var(--cosmic-latte-300)]">Back</p>
 					</button>
 					<h1 className="text-3xl font-bold ml-[1rem] tracking-[0.5rem]">
@@ -93,7 +97,11 @@ export default function FlightList({ results, mutation, onComplete }) {
 							setSelectedDepartingFlight(null);
 						}}
 					>
-						<Back stroke="var(--cosmic-latte-300)" />
+						<Back
+							width={14}
+							height={14}
+							stroke="var(--cosmic-latte-300)"
+						/>
 						<p className="text-[var(--cosmic-latte-300)]">Back</p>
 					</button>
 					<h1 className="text-3xl font-bold ml-[1rem] tracking-[0.5rem]">
@@ -136,7 +144,11 @@ export default function FlightList({ results, mutation, onComplete }) {
 							: setSelectedDepartingFlight(null);
 					}}
 				>
-					<Back stroke="var(--cosmic-latte-300)" />
+					<Back
+						width={14}
+						height={14}
+						stroke="var(--cosmic-latte-300)"
+					/>
 					<p className="text-[var(--cosmic-latte-300)]">Back</p>
 				</button>
 				<h1 className="text-3xl font-bold ml-[1rem] tracking-[0.5rem]">

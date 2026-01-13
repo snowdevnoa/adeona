@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import TripCard from "@/components/trip/TripCard";
 import PageWrapper from "@/components/global/PageWrapper";
-
+import TripSearch from "@/components/trip/TripSearch";
 
 export default function Trips() {
 	const router = useRouter();
@@ -15,6 +15,7 @@ export default function Trips() {
 		queryKey: ["trips"],
 		queryFn: fetchTrips,
 	});
+	const [search, setSearch] = useState("");
 
 	async function fetchTrips() {
 		console.log("Fetching user trips");
@@ -32,18 +33,17 @@ export default function Trips() {
 		const userTrips = await response.json();
 		return userTrips;
 	}
-
-	let myTrips = null;
-	if (data) {
-		myTrips = data.trips.map((trip) => {
-			return (
-				<TripCard
-					trip={trip}
-					key={trip.trip_id}
-				/>
-			);
-		});
+	//Handle input event on search
+	function handleChange(e) {
+		e.preventDefault();
+		setSearch(e.target.value);
 	}
+
+	//Filter out trips from search
+	const filteredTrips =
+		data?.trips?.filter((trip) =>
+			trip.trip_name.toLowerCase().includes(search.toLowerCase())
+		) || [];
 
 	if (status === "pending")
 		return (
@@ -69,11 +69,16 @@ export default function Trips() {
 	) : (
 		<PageWrapper className="space-y-[2rem]">
 			<Header title="Trips" />
-			<h1 className="text-4xl p-4 font-bold">{myTrips.length} trips</h1>
+			<h1 className="text-4xl p-4 font-bold">{filteredTrips.length} trips</h1>
+			<TripSearch onChange={handleChange} />
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8 self-center">
-				{myTrips}
+				{filteredTrips.map((trip) => (
+					<TripCard
+						trip={trip}
+						key={trip.trip_id}
+					/>
+				))}
 			</div>
-
 			<SecondaryNav />
 		</PageWrapper>
 	);
