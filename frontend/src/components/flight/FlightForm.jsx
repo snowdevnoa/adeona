@@ -108,9 +108,14 @@ export default function FlightForm({ onSubmit }) {
 					className="flex justify-center items-center space-x-2 hover:cursor-pointer"
 					onClick={() => setPassengerGroup(!passengerGroup)}
 				>
-					<Passengers />
+					<Passengers
+						width={16}
+						height="auto"
+					/>
 					<p>{passengers}</p>
 					<Dropdown
+						width={8}
+						height="auto"
 						className={`${passengerGroup ? "transform-[scaleY(-1)]" : ""}`}
 					/>
 				</div>

@@ -125,7 +125,11 @@ export default function FlightCard({
 				</div>
 
 				<section className="flex">
-					<SegmentAirline className="mr-4" />
+					<SegmentAirline
+						className="mr-4"
+						width={30}
+						height={30}
+					/>
 					<div className="flex flex-col grow">
 						<p className="font-bold">
 							{segmentDepartureDateTime.format("h:mm A")}
@@ -183,7 +187,10 @@ export default function FlightCard({
 			animate={status}
 		>
 			<section className="flex">
-				<AirlineLogo />
+				<AirlineLogo
+					width={40}
+					height={40}
+				/>
 				<div className="flex flex-col grow ml-6">
 					<div className="flex justify-between">
 						{/* Departing date */}
@@ -244,6 +251,8 @@ export default function FlightCard({
 				>
 					<p>see details</p>
 					<Dropdown
+						width={8}
+						height="auto"
 						fill={status === "open" ? "" : "white"}
 						className={status === "open" ? "rotate-180" : ""}
 					/>

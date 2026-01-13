@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Edit from "@/assets/trip/Edit.svg";
 import TripModal from "./TripModal";
+import Trash from "@/assets/trip/Trash.svg";
 
 export default function TripCard({ trip }) {
 	const [status, setStatus] = useState("default" || "hover");
-	const [modal, setModal] = useState("close" || "open");
+	const [card, setCard] = useState("close" || "open" || "deleted");
 
 	/* 
 	{
@@ -33,6 +34,19 @@ export default function TripCard({ trip }) {
 }
 	*/
 
+	if (card === "deleted")
+		return (
+			<div className="flex flex-col justify-center items-center p-6 bg-[var(--success-100)] rounded-4xl max-w-[275px] h-[200px]">
+				<Trash
+					width={40}
+					height={40}
+				/>
+				<h2 className="font-bold space-y-6 text-lg text-center">
+					{trip.trip_name} has been deleted
+				</h2>
+			</div>
+		);
+
 	return (
 		<article className="w-[275px] space-y-[1rem]">
 			<div
@@ -48,10 +62,12 @@ export default function TripCard({ trip }) {
 			>
 				{status === "hover" ? (
 					<Edit
+						width={40}
+						height={40}
 						className="z-2 absolute right-[16px] bottom-[16px] hover:cursor-pointer"
 						fill="var(--cosmic-latte-300)"
 						onClick={() => {
-							setModal("open");
+							setCard("open");
 						}}
 					/>
 				) : (
@@ -72,7 +88,14 @@ export default function TripCard({ trip }) {
 				<p>{trip.flight_class.toLowerCase()}</p>
 				<p>{trip.trip_type.replace(/_/g, " ")}</p>
 			</div>
-			{modal === "open" ? <TripModal setModal={setModal} trip={trip}/> : ""}
+			{card === "open" ? (
+				<TripModal
+					setCard={setCard}
+					trip={trip}
+				/>
+			) : (
+				""
+			)}
 		</article>
 	);
 }

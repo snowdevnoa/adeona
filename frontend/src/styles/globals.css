@@ -74,3 +74,14 @@ body {
 	font-family: "Urbanist", Courier, monospace;
 	color: var(--adeona-blue-900);
 }
+
+
+/* Target the SVGs */
+svg {
+  overflow: visible !important;
+}
+
+/* Ensure the group inside doesn't clip */
+svg g {
+  clip-path: none !important;
+}

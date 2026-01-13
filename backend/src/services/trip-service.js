@@ -47,4 +47,17 @@ export default class TripService {
 			);
 		}
 	}
+
+
+	//Delete user trip in database
+	async deleteTrip(user, trip){
+		try {
+			const result = await TripModel.deleteTrip(user, trip);
+			return result;
+		} catch (err) {
+			throw new Error(
+				"Could not delete trip in database"
+			);
+		}
+	}
 }

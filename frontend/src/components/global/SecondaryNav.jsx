@@ -16,7 +16,10 @@ export default function SecondaryNav() {
 				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Profile</p>
-				<Profile />
+				<Profile
+					width={18}
+					height="auto"
+				/>
 			</Link>
 			<Link
 				href="/"
@@ -25,7 +28,10 @@ export default function SecondaryNav() {
 				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Flights</p>
-				<Airplane />
+				<Airplane
+					width={20}
+					height="auto"
+				/>
 			</Link>
 			<Link
 				href="/trips"
@@ -34,7 +40,10 @@ export default function SecondaryNav() {
 				} font-bold mx-[2rem] md:mx-[4rem] py-[0.5rem] flex flex-col items-center hover:border-b-[3px]`}
 			>
 				<p>Trips</p>
-				<Bookmark />
+				<Bookmark
+					width={20}
+					height="auto"
+				/>
 			</Link>
 		</nav>
 	);

@@ -35,3 +35,14 @@ export const updateTrip = async (req, res) => {
 		res.status(400).json({ error: err.message });
 	}
 };
+
+export const deleteTrip = async (req, res) => {
+	try {
+		const user = req.user;
+		const tripData = req.body;
+		const result = await trip.deleteTrip(user, tripData);
+		res.status(200).json({ success: `Deleted ${result}` });
+	} catch (err) {
+		res.status(400).json({ error: err.message });
+	}
+};

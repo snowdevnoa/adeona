@@ -89,4 +89,16 @@ export default class TripModel {
 		);
 		if (result.rowCount === 1) return trip_name;
 	}
+
+	static async deleteTrip(user, trip) {
+		const { id } = user;
+		const { trip_id, trip_name } = trip;
+		const result = await pool.query(
+			`DELETE FROM trips
+			WHERE user_id = $1 AND trip_id = $2;`,
+			[id, trip_id]
+		);
+		console.log(result);
+		if (result.rowCount === 1) return trip_name;
+	}
 }
