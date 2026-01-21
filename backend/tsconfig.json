@@ -3,6 +3,7 @@
 		"target": "ES2020",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
+		"isolatedModules": true, // For ts-jest config
 		"outDir": "dist",
 		"rootDir": "src",
 		"esModuleInterop": true,
