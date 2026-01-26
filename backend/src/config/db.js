@@ -1,12 +1,23 @@
 import { Pool } from "pg";
 
-const pool = new Pool({
-	host: process.env.POSTGRES_HOST,
-	user: process.env.POSTGRES_USER,
-	password: process.env.POSTGRES_PASSWORD,
-	port: 5432,
-	database: process.env.POSTGRES_DB,
-});
+//Define configuration for pool
+const poolConfig = process.env.DATABASE_URL
+	? {
+			connectionString: process.env.DATABASE_URL,
+			// SSL is required for Railway's internal/external connections
+			ssl: { rejectUnauthorized: false },
+		}
+	: {
+			host: process.env.POSTGRES_HOST,
+			user: process.env.POSTGRES_USER,
+			password: process.env.POSTGRES_PASSWORD,
+			port: 5432,
+			database: process.env.POSTGRES_DB,
+			ssl: false, // No SSL for local Docker dev
+		};
+
+//Create pool
+const pool = new Pool(poolConfig);
 
 export const connectDB = async () => {
 	// Check connection once, but don't hold it open

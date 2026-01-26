@@ -46,7 +46,7 @@ export default function RegisterForm() {
 			};
 
 			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_DEV_API_URL}/users/register`,
+				`${process.env.NEXT_PUBLIC_API_URL}/users/register`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },

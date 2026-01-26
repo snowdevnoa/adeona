@@ -1,5 +1,5 @@
 // Class based adapter
-import { AmadeusAdapter } from "../adapters/amadeus-adapter.ts";
+import { AmadeusAdapter } from "../adapters/amadeus-adapter.js";
 import type { FlightSearchData } from "../interfaces/flight-provider.js";
 import SearchHistoryModel from "../models/search-history-model.js";
 import LocationModel from "../models/location-model.js";

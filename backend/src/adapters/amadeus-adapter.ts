@@ -1,7 +1,7 @@
 import type {
 	FlightProvider,
 	FlightSearchData,
-} from "../interfaces/flight-provider.ts";
+} from "../interfaces/flight-provider.js";
 
 import LocationModel from "../models/location-model.js";
 import AirlineModel from "../models/airline-model.js";
