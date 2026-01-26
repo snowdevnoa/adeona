@@ -55,7 +55,7 @@ export default function TripForm({
 			setStatus("success");
 		} catch (err) {
 			console.log(err.message);
-			setMessage("Only users can create trips! Please log in or create an account.");
+			setMessage(err.message);
 		}
 	}
 

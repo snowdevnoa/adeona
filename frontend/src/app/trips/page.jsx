@@ -20,7 +20,7 @@ export default function Trips() {
 	async function fetchTrips() {
 		console.log("Fetching user trips");
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_DEV_API_URL}/trips/my-trips`,
+			`${process.env.NEXT_PUBLIC_API_URL}/trips/my-trips`,
 			{ credentials: "include" }
 		);
 		// Check for any errors from response, if true throw an error for React Query

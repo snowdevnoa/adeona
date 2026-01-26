@@ -32,6 +32,8 @@ const startServer = async () => {
 
 		app.use("/flights", flightRouter);
 
+		app.use("/trips", tripRouter);
+
 		app.listen(port, () => {
 			console.log(`Example app listening on port ${port}`);
 		});
