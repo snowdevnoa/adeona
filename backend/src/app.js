@@ -15,7 +15,7 @@ const startServer = async () => {
 		// Enable CORS to allow cross-origin requests from the browser (e.g., frontend running on a different origin)
 		app.use(
 			cors({
-				origin: process.env.DEV_CORS_ORIGIN,
+				origin: process.env.CORS_ORIGIN,
 				credentials: true,
 			}),
 		);
