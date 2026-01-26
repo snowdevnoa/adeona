@@ -36,7 +36,7 @@ export default function TripForm({
 			};
 
 			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_DEV_API_URL}/trips/save`,
+				`${process.env.NEXT_PUBLIC_API_URL}/trips/save`,
 				{
 					method: "POST",
 					credentials: "include",

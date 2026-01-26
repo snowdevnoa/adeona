@@ -36,7 +36,7 @@ export default function TripModal({ card, setCard, trip }) {
 		e.preventDefault();
 		try {
 			const result = await fetch(
-				`${process.env.NEXT_PUBLIC_DEV_API_URL}/trips/update`,
+				`${process.env.NEXT_PUBLIC_API_URL}/trips/update`,
 				{
 					method: "PUT",
 					credentials: "include",
@@ -62,7 +62,7 @@ export default function TripModal({ card, setCard, trip }) {
 		e.preventDefault();
 		try {
 			const result = await fetch(
-				`${process.env.NEXT_PUBLIC_DEV_API_URL}/trips/delete-trip`,
+				`${process.env.NEXT_PUBLIC_API_URL}/trips/delete-trip`,
 				{
 					method: "DELETE",
 					credentials: "include",
