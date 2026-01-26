@@ -1,4 +1,4 @@
-import FlightService from "../services/flight-service.ts";
+import FlightService from "../services/flight-service.js";
 
 const flight = new FlightService();
 

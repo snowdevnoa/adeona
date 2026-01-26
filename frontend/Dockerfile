@@ -12,6 +12,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=development
 ENV WATCHPACK_POLLING=true
+#Define default port
+ENV PORT=3001 
 EXPOSE 3001
 CMD ["npm", "run", "dev"]
 
@@ -45,6 +47,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Railway Tip: Match your package.json start script (3001)
+#Default port of cloud providers
+ENV PORT=8080
 EXPOSE 8080
 CMD ["npm", "start"]
