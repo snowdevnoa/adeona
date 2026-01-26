@@ -3,16 +3,21 @@
 		"target": "ES2020",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"isolatedModules": true, // For ts-jest config
+		"isolatedModules": true,
 		"outDir": "dist",
 		"rootDir": "src",
 		"esModuleInterop": true,
 		"strict": true,
 		"allowJs": true,
 		"checkJs": false,
-		"noEmit": true, // Don’t emit anything (we use ts-node)
+		"noEmit": false,
 		"resolveJsonModule": true,
-		"allowImportingTsExtensions": true
+		"allowImportingTsExtensions": false,
+		"skipLibCheck": true, // Speeds up build and avoids type conflicts in node_modules
+		"baseUrl": ".", // Helps with path resolution
+		"paths": {
+			"*": ["node_modules/*", "src/*"]
+		}
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"]

@@ -21,7 +21,7 @@ export default async function Page() {
 
 // export default function Page() {
 //   useEffect(() => {
-//     fetch(`${process.env.NEXT_PUBLIC_DEV_API_URL}/tests`)
+//     fetch(`${process.env.NEXT_PUBLIC_API_URL}/tests`)
 //       .then(res => res.json())
 //       .then(data => console.log(data))
 //       .catch(err => console.error("CORS error:", err));

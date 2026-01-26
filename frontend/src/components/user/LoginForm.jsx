@@ -43,7 +43,7 @@ export default function LoginForm() {
 
 		// Verify login information to database
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_DEV_API_URL}/users/login`,
+			`${process.env.NEXT_PUBLIC_API_URL}/users/login`,
 			{
 				method: "POST",
 				credentials: "include",

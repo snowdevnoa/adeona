@@ -28,7 +28,7 @@ export default function FlightPage() {
 	async function getFlights(searchData) {
 		// console.log(searchData);
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_DEV_API_URL}/flights/search`,
+			`${process.env.NEXT_PUBLIC_API_URL}/flights/search`,
 			{
 				method: "POST",
 				credentials: "include",

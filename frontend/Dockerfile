@@ -1,29 +1,50 @@
-# We're containerizing a Next app from the beginning without installing Node or npm locally, so create a package.json and add next and react as a dependency.
-# Docker’s mounted volumes don’t reliably emit file system events, so we enable legacy polling.
-
-# Determine base image
-FROM node:24-slim
-
-# Set working directory in container
+# 1. DEPS Stage: Install everything (Dev + Prod)
+FROM node:24-slim AS deps
 WORKDIR /app
-
-# Set node environment
-ENV NODE_ENV=development
-
-# Enable hot reloading via polling in Turbopack
-ENV WATCHPACK_POLLING=true
-
-# Copy package.json before running npm install, for layer caching
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy remaining source code AFTER installing dependencies into container
+# 2. DEV Stage: For local development (self note: set docker compose file to target stage)
+FROM node:24-slim AS dev
+WORKDIR /app
+# We need the full node_modules for dev (HMR, Linters, etc.)
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Expose the port
+ENV NODE_ENV=development
+ENV WATCHPACK_POLLING=true
 EXPOSE 3001
-
-#Start the development server
 CMD ["npm", "run", "dev"]
+
+# 3. BUILDER Stage: Where the heavy lifting happens
+# Railway will run this part automatically on its way to the last stage
+FROM node:24-slim AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# Define the ARGs from the cloud provider or CLI
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PRIVATE_API_URL
+
+# Convert them to ENVs so 'npm run build' can see them
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PRIVATE_API_URL=$NEXT_PRIVATE_API_URL
+# Perform the production build
+RUN npm run build
+# Remove devDependencies (Tailwind, ESLint) to save RAM
+RUN npm prune --production
+
+# 4. PRODUCTION Stage: The final imagg for production
+FROM node:24-slim AS production
+WORKDIR /app
+# Fix: No spaces in ENV, use production
+ENV NODE_ENV=production
+
+# Copy only build artifacts and pruned modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Railway Tip: Match your package.json start script (3001)
+EXPOSE 8080
+CMD ["npm", "start"]

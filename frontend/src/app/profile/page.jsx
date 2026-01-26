@@ -10,7 +10,7 @@ export default function Profile() {
 
 	async function getProfile() {
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_DEV_API_URL}/users/profile`,
+			`${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
 			{
 				method: "GET",
 				credentials: "include", // allow client request to include cookies
@@ -28,7 +28,7 @@ export default function Profile() {
 
 	async function logout() {
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_DEV_API_URL}/users/logout`,
+			`${process.env.NEXT_PUBLIC_API_URL}/users/logout`,
 			{
 				method: "POST",
 				credentials: "include", // allow client request to include cookies
