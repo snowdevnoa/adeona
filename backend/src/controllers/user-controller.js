@@ -26,15 +26,20 @@ export const loginUser = async (req, res) => {
 		// Validate existing user and return jwt token
 		const loginUser = await user.login(existingUser);
 
+		const cookieOption = {
+			maxAge: 3600 * 1000, // cookie 1hr max same as token
+			secure: true,
+			httpOnly: true,
+			sameSite: "none",
+			// Only use secure/none in production (Railway)
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		};
+
 		// Respond back to client with success
 		res
 			.status(200)
-			.cookie("user_access_token", `Bearer ${loginUser.token}`, {
-				maxAge: 3600 * 1000, // cookie 1hr max same as token
-				secure: true,
-				httpOnly: true,
-				sameSite: "none",
-			})
+			.cookie("user_access_token", `Bearer ${loginUser.token}`, cookieOption)
 			.json({ message: loginUser.message });
 	} catch (err) {
 		// Respond back to client with error

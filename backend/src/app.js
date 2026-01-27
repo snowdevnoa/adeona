@@ -9,7 +9,8 @@ const startServer = async () => {
 	try {
 		await connectDB();
 		const app = express();
-		const port = 3000;
+		// Dyanmic port handling
+		const port = process.env.PORT || 3000;
 
 		// Enable CORS to allow cross-origin requests from the browser (e.g., frontend running on a different origin)
 		app.use(
