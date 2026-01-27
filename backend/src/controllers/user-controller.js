@@ -45,16 +45,17 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
 	try {
-		// Clear the http cookie
-		const expiredCookie = cookie.serialize("user_access_token", "", {
+		const cookieOptions = {
 			httpOnly: true,
-			expires: new Date(0),
 			path: "/",
-		});
-		res
-			.status(200)
-			.setHeader("Set-Cookie", expiredCookie)
-			.json({ success: "Logged out successfully" });
+			// Only use secure/none in production (Railway)
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		};
+
+		// Use express clear cookie method to work with cloud production environment
+		res.clearCookie("user_access_token", cookieOptions);
+		res.status(200).json({ success: "Logged out successfully" });
 	} catch {
 		res.status(400).json({ error: "We could not log you out." });
 	}
