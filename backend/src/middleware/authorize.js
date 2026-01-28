@@ -10,10 +10,26 @@ export default function authorizeUser(req, res, next) {
 	// console.log(cookies.user_access_token);
 	// console.log(clientToken);
 
-	if (!clientToken || !clientToken.startsWith("Bearer ")) {
-		return res.status(401).json({ error: "User is not logged in" });
-	}
-	const token = clientToken.split(" ", 2)[1];
+	export default function authorizeUser(req, res, next) {
+	let token;
+	try {
+		// Get token from client http cookie
+		const cookies = parse(req.headers.cookie);
+		const clientToken = cookies.user_access_token;
+		// console.log(cookies.user_access_token);
+
+		if (!clientToken || !clientToken.startsWith("Bearer ")) {
+			return res
+				.status(401)
+				.json({ error: "Whoops! You need to be logged in to see this." });
+		}
+		token = clientToken.split(" ", 2)[1];
+	} catch (error) {
+		return res
+			.status(401)
+			.json({ error: "Whoops! You need to be logged in to see this." });
+	}}
+
 	// Verify token
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
