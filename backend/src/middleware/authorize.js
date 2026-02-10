@@ -4,13 +4,6 @@ import { parse } from "cookie";
 // Self note: look into refresh tokens to use with access tokens
 // Strict auth for protected routes
 export default function authorizeUser(req, res, next) {
-	// Get token from client http cookie
-	const cookies = parse(req.headers.cookie);
-	const clientToken = cookies.user_access_token;
-	// console.log(cookies.user_access_token);
-	// console.log(clientToken);
-
-	export default function authorizeUser(req, res, next) {
 	let token;
 	try {
 		// Get token from client http cookie
@@ -28,7 +21,7 @@ export default function authorizeUser(req, res, next) {
 		return res
 			.status(401)
 			.json({ error: "Whoops! You need to be logged in to see this." });
-	}}
+	}
 
 	// Verify token
 	try {
